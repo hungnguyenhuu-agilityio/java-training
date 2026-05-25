@@ -4,6 +4,7 @@ This repository tracks Hung Nguyen Huu’s Java training roadmap.
 
 ## Session 1: Java Fundamentals
 
+- Folder: [`fundamental/`](./fundamental/)
 - Timeline: 15 working days
 - Stack: Java JDK 21, IntelliJ IDEA Community Edition
 - Reference: *Head First Java, 3rd Edition*
@@ -18,6 +19,7 @@ This repository tracks Hung Nguyen Huu’s Java training roadmap.
 
 ## Session 2: RESTful Web Services with Spring
 
+- Folder: [`spring-framework/`](./spring-framework/)
 - Timeline: 28 working days
 - Stack: Java 21, Spring Boot 3.x, Spring Framework 6, Spring Security 6, Spring Data JPA
 - Reference: *Mastering RESTful Web Services with Java*
@@ -57,4 +59,3 @@ Build a task management REST API with:
 ### Final Step
 
 - Prepare slides and presentation
-
