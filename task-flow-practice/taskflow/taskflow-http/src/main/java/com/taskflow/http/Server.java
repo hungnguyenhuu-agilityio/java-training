@@ -4,7 +4,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.sun.net.httpserver.HttpServer;
 import com.taskflow.persistence.DbConnection;
+import com.taskflow.persistence.ProjectDao;
+import com.taskflow.persistence.TaskDao;
 import com.taskflow.persistence.UserDao;
+import com.taskflow.service.ProjectService;
+import com.taskflow.service.TaskService;
 import com.taskflow.service.TokenStore;
 import com.taskflow.service.UserService;
 
@@ -46,6 +50,12 @@ public class Server {
         TokenStore tokenStore = new TokenStore();
         UserService userService = new UserService(userDao, tokenStore);
 
+        ProjectDao projectDao = new ProjectDao(db);
+        ProjectService projectService = new ProjectService(projectDao);
+
+        TaskDao taskDao = new TaskDao(db);
+        TaskService taskService = new TaskService(taskDao);
+
         ObjectMapper mapper = new ObjectMapper()
                 .registerModule(new JavaTimeModule());
 
@@ -56,9 +66,16 @@ public class Server {
         // 4. Register public auth endpoints (no filter)
         server.createContext("/auth", new AuthHandler(userService, mapper));
 
-        // T003+ will register TaskHandler, ProjectHandler, etc. here
+        // 5. Register protected endpoints with AuthFilter
+        AuthFilter authFilter = new AuthFilter(tokenStore);
 
-        // 6. JVM shutdown hook: close DB pool
+        var projectsCtx = server.createContext("/projects", new ProjectHandler(projectService, mapper));
+        projectsCtx.getFilters().add(authFilter);
+
+        var tasksCtx = server.createContext("/tasks", new TaskHandler(taskService, mapper));
+        tasksCtx.getFilters().add(authFilter);
+
+        // 6. JVM shutdown hook: stop server and close DB pool
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             server.stop(1);
             db.close();
