@@ -1,0 +1,28 @@
+<div class="task-list-page">
+  <header class="task-list-header">
+    <h1>My Tasks</h1>
+    <button (click)="startCreate()" *ngIf="!showCreateForm && !editingTask">+ New Task</button>
+  </header>
+
+  <div *ngIf="loadError" class="error-banner" role="alert">{{ loadError }}</div>
+
+  <section *ngIf="showCreateForm" class="form-section">
+    <h2>New Task</h2>
+    <app-task-form [errorMessage]="formError" (submitted)="onCreate($event)" (cancelled)="cancelForm()"></app-task-form>
+  </section>
+
+  <section *ngIf="editingTask" class="form-section">
+    <h2>Edit Task</h2>
+    <app-task-form [task]="editingTask" [errorMessage]="formError" (submitted)="onUpdate($event)" (cancelled)="cancelForm()"></app-task-form>
+  </section>
+
+  <section class="task-list-body">
+    <p *ngIf="tasks.length === 0 && !loadError" class="empty-state">No tasks yet. Create your first task above.</p>
+    <app-task-item
+      *ngFor="let task of tasks"
+      [task]="task"
+      (editClicked)="startEdit($event)"
+      (deleteClicked)="onDelete($event)">
+    </app-task-item>
+  </section>
+</div>

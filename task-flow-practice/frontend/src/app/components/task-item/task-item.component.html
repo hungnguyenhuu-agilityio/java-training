@@ -1,0 +1,16 @@
+<div class="task-item">
+  <div class="task-title" [title]="task.title">{{ task.title }}</div>
+  <div class="task-meta">
+    <span class="badge status-{{ task.status.toLowerCase() }}">
+      {{ statusLabels[task.status] }}
+    </span>
+    <span class="badge priority-{{ task.priority.toLowerCase() }}">
+      {{ priorityLabels[task.priority] }}
+    </span>
+    <span *ngIf="task.dueDate" class="due-date">{{ task.dueDate }}</span>
+  </div>
+  <div class="task-actions">
+    <button (click)="onEdit()" aria-label="Edit task">Edit</button>
+    <button (click)="onDelete()" class="btn-danger" aria-label="Delete task">Delete</button>
+  </div>
+</div>
