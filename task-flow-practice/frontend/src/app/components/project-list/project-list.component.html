@@ -1,0 +1,51 @@
+<div class="project-list">
+  <div class="page-header">
+    <h1>Projects</h1>
+    <button type="button" (click)="openCreate()" *ngIf="!showForm">+ New Project</button>
+  </div>
+
+  <div *ngIf="loadError" class="error-banner" role="alert">{{ loadError }}</div>
+
+  <div *ngIf="showForm" class="project-form-panel">
+    <h2>{{ editingProject ? 'Edit Project' : 'New Project' }}</h2>
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label for="proj-name">Name <span aria-hidden="true">*</span></label>
+        <input id="proj-name" type="text" formControlName="name" placeholder="Project name"
+               [class.invalid]="form.get('name')?.invalid && form.get('name')?.touched" />
+        <span *ngIf="form.get('name')?.invalid && form.get('name')?.touched" class="field-error">
+          Name is required.
+        </span>
+      </div>
+      <div class="form-group">
+        <label for="proj-desc">Description</label>
+        <textarea id="proj-desc" formControlName="description" rows="2" placeholder="Optional description"></textarea>
+      </div>
+      <div *ngIf="formError" class="error-banner" role="alert">{{ formError }}</div>
+      <div class="form-actions">
+        <button type="submit" [disabled]="form.invalid">
+          {{ editingProject ? 'Update' : 'Create' }}
+        </button>
+        <button type="button" (click)="cancelForm()">Cancel</button>
+      </div>
+    </form>
+  </div>
+
+  <p *ngIf="projects.length === 0 && !loadError" class="empty-state">No projects yet.</p>
+
+  <ul *ngIf="projects.length > 0" class="project-items">
+    <li *ngFor="let project of projects" class="project-item">
+      <div class="project-info">
+        <strong class="project-name">{{ project.name }}</strong>
+        <span *ngIf="project.description" class="project-desc">{{ project.description }}</span>
+      </div>
+      <div class="project-actions">
+        <button type="button" (click)="openEdit(project)">Edit</button>
+        <button type="button" (click)="deleteProject(project)" class="btn-danger">Delete</button>
+      </div>
+      <div *ngIf="deleteErrors[project.id]" class="error-inline" role="alert">
+        {{ deleteErrors[project.id] }}
+      </div>
+    </li>
+  </ul>
+</div>
