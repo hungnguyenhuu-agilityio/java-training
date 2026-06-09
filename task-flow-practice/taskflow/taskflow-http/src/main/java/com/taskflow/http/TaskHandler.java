@@ -9,6 +9,7 @@ import com.taskflow.domain.Task;
 import com.taskflow.domain.TaskStatus;
 import com.taskflow.domain.User;
 import com.taskflow.service.TaskService;
+import com.taskflow.util.CsvExporter;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -56,8 +57,20 @@ public class TaskHandler implements HttpHandler {
             return;
         }
 
-        // Determine whether request is /tasks or /tasks/{id}
+        // Determine whether request is /tasks, /tasks/export/csv, or /tasks/{id}
         String rawPath = exchange.getRequestURI().getPath(); // e.g. "/tasks" or "/tasks/42"
+
+        // Export route must be checked before the generic {id} branch to prevent
+        // "export" being parsed as a numeric id (which would return a 400).
+        if (rawPath.endsWith("/export/csv")) {
+            if ("GET".equalsIgnoreCase(method)) {
+                handleExport(exchange);
+            } else {
+                AuthHandler.sendError(exchange, 405, "Method not allowed");
+            }
+            return;
+        }
+
         String[] segments = rawPath.split("/");
         // segments[0]="" segments[1]="tasks" segments[2]=id (optional)
         boolean hasId = segments.length >= 3 && !segments[2].isBlank();
@@ -294,6 +307,33 @@ public class TaskHandler implements HttpHandler {
 
         taskService.deleteTask(id);
         AuthHandler.sendResponse(exchange, 204, "");
+    }
+
+    // -------------------------------------------------------------------------
+    // Export: GET /tasks/export/csv
+    // -------------------------------------------------------------------------
+
+    /**
+     * Streams all tasks for the authenticated user as RFC 4180 CSV.
+     *
+     * <p>Sets {@code Content-Type: text/csv} and
+     * {@code Content-Disposition: attachment; filename="tasks.csv"}.
+     * Does NOT close the exchange OutputStream — HttpServer closes it after the handler returns.
+     */
+    private void handleExport(HttpExchange exchange) throws IOException {
+        List<Task> tasks = taskService.getTasks(Map.of());
+
+        byte[] csvBytes;
+        try (java.io.ByteArrayOutputStream buf = new java.io.ByteArrayOutputStream()) {
+            CsvExporter.export(tasks, buf);
+            csvBytes = buf.toByteArray();
+        }
+
+        exchange.getResponseHeaders().set("Content-Type", "text/csv");
+        exchange.getResponseHeaders().set("Content-Disposition", "attachment; filename=\"tasks.csv\"");
+        exchange.sendResponseHeaders(200, csvBytes.length);
+        exchange.getResponseBody().write(csvBytes);
+        // DO NOT close exchange.getResponseBody() — HttpServer closes it.
     }
 
     // -------------------------------------------------------------------------
