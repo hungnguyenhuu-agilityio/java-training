@@ -30,5 +30,11 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./components/project-list/project-list.component').then(m => m.ProjectListComponent),
     canActivate: [authGuard]
+  },
+  {
+    path: 'kanban',
+    loadComponent: () =>
+      import('./components/kanban/kanban.component').then(m => m.KanbanComponent),
+    canActivate: [authGuard]
   }
 ];
