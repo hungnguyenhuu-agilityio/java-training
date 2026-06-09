@@ -6,6 +6,8 @@
 
   <div *ngIf="loadError" class="error-banner" role="alert">{{ loadError }}</div>
 
+  <app-filter-bar (filtersChanged)="onFiltersChanged($event)"></app-filter-bar>
+
   <section *ngIf="showCreateForm" class="form-section">
     <h2>New Task</h2>
     <app-task-form [errorMessage]="formError" (submitted)="onCreate($event)" (cancelled)="cancelForm()"></app-task-form>
@@ -17,9 +19,14 @@
   </section>
 
   <section class="task-list-body">
-    <p *ngIf="tasks.length === 0 && !loadError" class="empty-state">No tasks yet. Create your first task above.</p>
+    <p *ngIf="filteredTasks.length === 0 && !loadError && (hasActiveApiFilters || searchTerm)" class="empty-state">
+      No tasks match your filters.
+    </p>
+    <p *ngIf="filteredTasks.length === 0 && !loadError && !hasActiveApiFilters && !searchTerm" class="empty-state">
+      No tasks yet. Create your first task above.
+    </p>
     <app-task-item
-      *ngFor="let task of tasks"
+      *ngFor="let task of filteredTasks"
       [task]="task"
       (editClicked)="startEdit($event)"
       (deleteClicked)="onDelete($event)">
