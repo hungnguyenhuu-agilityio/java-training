@@ -1,0 +1,30 @@
+<div class="task-card">
+  <div class="task-card__header">
+    <span class="task-card__title">{{ task.title }}</span>
+    <span class="task-card__badge task-card__badge--{{ task.priority.toLowerCase() }}">
+      {{ priorityLabels[task.priority] }}
+    </span>
+  </div>
+  <div class="task-card__actions">
+    @if (task.status !== 'DONE') {
+      <button
+        class="btn btn--move"
+        [disabled]="moving"
+        (click)="onMove()"
+        aria-label="Move task to next status"
+      >
+        {{ moving ? '…' : 'Move →' }}
+      </button>
+    }
+    @if (task.status === 'DONE') {
+      <button
+        class="btn btn--reset"
+        [disabled]="moving"
+        (click)="onReset()"
+        aria-label="Reset task to TODO"
+      >
+        {{ moving ? '…' : '← Reset' }}
+      </button>
+    }
+  </div>
+</div>
