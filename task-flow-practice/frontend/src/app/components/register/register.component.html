@@ -1,0 +1,60 @@
+<div class="auth-card">
+  <h1>TaskFlow</h1>
+  <h2>Create Account</h2>
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <div class="field">
+      <label for="name">Full Name</label>
+      <input
+        id="name"
+        type="text"
+        formControlName="name"
+        placeholder="Jane Doe"
+        autocomplete="name"
+      />
+      @if (form.get('name')?.invalid && form.get('name')?.touched) {
+        <span class="error">Name is required.</span>
+      }
+    </div>
+
+    <div class="field">
+      <label for="email">Email</label>
+      <input
+        id="email"
+        type="email"
+        formControlName="email"
+        placeholder="you@example.com"
+        autocomplete="email"
+      />
+      @if (form.get('email')?.invalid && form.get('email')?.touched) {
+        <span class="error">Enter a valid email address.</span>
+      }
+    </div>
+
+    <div class="field">
+      <label for="password">Password</label>
+      <input
+        id="password"
+        type="password"
+        formControlName="password"
+        placeholder="••••••••"
+        autocomplete="new-password"
+      />
+      @if (form.get('password')?.invalid && form.get('password')?.touched) {
+        <span class="error">Password must be at least 6 characters.</span>
+      }
+    </div>
+
+    @if (errorMessage) {
+      <p class="error-banner" role="alert">{{ errorMessage }}</p>
+    }
+
+    <button type="submit" [disabled]="form.invalid || loading">
+      {{ loading ? 'Creating account…' : 'Create Account' }}
+    </button>
+  </form>
+
+  <p class="switch-link">
+    Already have an account? <a routerLink="/login">Sign In</a>
+  </p>
+</div>
