@@ -10,6 +10,7 @@ import com.taskflow.persistence.ProjectDao;
 import com.taskflow.persistence.TaskDao;
 import com.taskflow.persistence.UserDao;
 import com.taskflow.service.CommentService;
+import com.taskflow.service.NotificationScheduler;
 import com.taskflow.service.ProjectService;
 import com.taskflow.service.StatsService;
 import com.taskflow.service.TaskService;
@@ -67,6 +68,9 @@ public class Server {
 
         StatsService statsService = new StatsService(taskDao);
 
+        NotificationScheduler notificationScheduler = new NotificationScheduler(taskDao, 60);
+        notificationScheduler.start();
+
         ObjectMapper mapper = new ObjectMapper()
                 .registerModule(new JavaTimeModule());
 
@@ -96,6 +100,7 @@ public class Server {
 
         // 6. JVM shutdown hook: stop server and close DB pool
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            notificationScheduler.shutdown();
             server.stop(1);
             db.close();
             log.info("Server stopped.");
