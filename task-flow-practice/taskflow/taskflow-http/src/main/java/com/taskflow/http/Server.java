@@ -2,7 +2,6 @@ package com.taskflow.http;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.sun.net.httpserver.HttpContext;
 import com.sun.net.httpserver.HttpServer;
 import com.taskflow.persistence.DbConnection;
 import com.taskflow.persistence.UserDao;
@@ -57,13 +56,7 @@ public class Server {
         // 4. Register public auth endpoints (no filter)
         server.createContext("/auth", new AuthHandler(userService, mapper));
 
-        // 5. Register a sample protected context to demonstrate AuthFilter
-        //    (later tasks will add TaskHandler, ProjectHandler, etc.)
-        HttpContext tasksContext = server.createContext("/tasks", exchange -> {
-            AuthHandler.addCorsHeaders(exchange);
-            AuthHandler.sendResponse(exchange, 200, "{\"tasks\":[]}");
-        });
-        tasksContext.getFilters().add(new AuthFilter(tokenStore));
+        // T003+ will register TaskHandler, ProjectHandler, etc. here
 
         // 6. JVM shutdown hook: close DB pool
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {

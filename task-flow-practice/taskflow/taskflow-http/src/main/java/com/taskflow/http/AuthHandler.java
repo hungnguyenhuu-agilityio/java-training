@@ -150,10 +150,11 @@ public class AuthHandler implements HttpHandler {
         }
     }
 
+    private static final ObjectMapper ERROR_MAPPER = new ObjectMapper();
+
     static void sendError(HttpExchange exchange, int status, String message) throws IOException {
-        ObjectMapper om = new ObjectMapper();
-        ObjectNode err = om.createObjectNode();
+        ObjectNode err = ERROR_MAPPER.createObjectNode();
         err.put("error", message);
-        sendResponse(exchange, status, om.writeValueAsString(err));
+        sendResponse(exchange, status, ERROR_MAPPER.writeValueAsString(err));
     }
 }
