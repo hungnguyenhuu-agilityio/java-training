@@ -190,6 +190,43 @@ public class TaskDao {
         }
     }
 
+    /**
+     * Returns all tasks whose {@code due_date} falls between {@code from} (inclusive)
+     * and {@code to} (inclusive).
+     *
+     * <p>The {@code due_date} column is stored as MySQL {@code DATE} — use
+     * {@link java.sql.Date} params, not {@link java.sql.Timestamp}.
+     *
+     * @param from start of the window (inclusive)
+     * @param to   end of the window (inclusive)
+     * @return tasks in the window, ordered by id
+     */
+    public List<Task> findDueSoon(java.time.LocalDate from, java.time.LocalDate to) {
+        String sql = """
+                SELECT id, title, description, status, priority, due_date,
+                       project_id, assignee_id, created_at
+                FROM tasks
+                WHERE due_date BETWEEN ? AND ?
+                ORDER BY id
+                """;
+        try (Connection conn = db.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setDate(1, Date.valueOf(from));
+            ps.setDate(2, Date.valueOf(to));
+
+            try (ResultSet rs = ps.executeQuery()) {
+                List<Task> tasks = new ArrayList<>();
+                while (rs.next()) {
+                    tasks.add(mapRow(rs));
+                }
+                return tasks;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("TaskDao.findDueSoon failed: " + e.getMessage(), e);
+        }
+    }
+
     // -------------------------------------------------------------------------
     // Test helpers
     // -------------------------------------------------------------------------
