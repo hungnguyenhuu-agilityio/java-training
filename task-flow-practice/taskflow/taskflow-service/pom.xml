@@ -28,6 +28,12 @@
             <artifactId>taskflow-persistence</artifactId>
         </dependency>
 
+        <!-- jBCrypt password hashing -->
+        <dependency>
+            <groupId>org.mindrot</groupId>
+            <artifactId>jbcrypt</artifactId>
+        </dependency>
+
         <!-- JUnit 5 for testing -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
