@@ -1,0 +1,46 @@
+<div class="auth-card">
+  <h1>TaskFlow</h1>
+  <h2>Sign In</h2>
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <div class="field">
+      <label for="email">Email</label>
+      <input
+        id="email"
+        type="email"
+        formControlName="email"
+        placeholder="you@example.com"
+        autocomplete="email"
+      />
+      @if (form.get('email')?.invalid && form.get('email')?.touched) {
+        <span class="error">Enter a valid email address.</span>
+      }
+    </div>
+
+    <div class="field">
+      <label for="password">Password</label>
+      <input
+        id="password"
+        type="password"
+        formControlName="password"
+        placeholder="••••••••"
+        autocomplete="current-password"
+      />
+      @if (form.get('password')?.invalid && form.get('password')?.touched) {
+        <span class="error">Password is required.</span>
+      }
+    </div>
+
+    @if (errorMessage) {
+      <p class="error-banner" role="alert">{{ errorMessage }}</p>
+    }
+
+    <button type="submit" [disabled]="form.invalid || loading">
+      {{ loading ? 'Signing in…' : 'Sign In' }}
+    </button>
+  </form>
+
+  <p class="switch-link">
+    Don't have an account? <a routerLink="/register">Register</a>
+  </p>
+</div>
