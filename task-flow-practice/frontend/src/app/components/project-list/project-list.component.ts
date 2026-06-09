@@ -19,6 +19,7 @@ export class ProjectListComponent implements OnInit {
   showForm = false;
   editingProject: Project | null = null;
   deleteErrors: Record<number, string> = {};
+  formError = '';
 
   form!: FormGroup;
 
@@ -56,10 +57,12 @@ export class ProjectListComponent implements OnInit {
   cancelForm(): void {
     this.showForm = false;
     this.editingProject = null;
+    this.formError = '';
   }
 
   onSubmit(): void {
     if (this.form.invalid) return;
+    this.formError = '';
     const value = this.form.value;
     const payload = {
       name: value.name.trim(),
@@ -72,6 +75,9 @@ export class ProjectListComponent implements OnInit {
           const idx = this.projects.findIndex(p => p.id === updated.id);
           if (idx !== -1) this.projects[idx] = updated;
           this.cancelForm();
+        },
+        error: (err) => {
+          this.formError = err?.error?.message ?? 'Failed to update project.';
         }
       });
     } else {
@@ -79,6 +85,9 @@ export class ProjectListComponent implements OnInit {
         next: (created) => {
           this.projects = [...this.projects, created];
           this.cancelForm();
+        },
+        error: (err) => {
+          this.formError = err?.error?.message ?? 'Failed to create project.';
         }
       });
     }

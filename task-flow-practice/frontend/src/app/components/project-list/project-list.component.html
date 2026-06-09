@@ -21,6 +21,7 @@
         <label for="proj-desc">Description</label>
         <textarea id="proj-desc" formControlName="description" rows="2" placeholder="Optional description"></textarea>
       </div>
+      <div *ngIf="formError" class="error-banner" role="alert">{{ formError }}</div>
       <div class="form-actions">
         <button type="submit" [disabled]="form.invalid">
           {{ editingProject ? 'Update' : 'Create' }}
