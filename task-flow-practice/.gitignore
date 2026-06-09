@@ -1,0 +1,14 @@
+# Claude Code rss
+.claude/
+docs/
+memory/
+tasks/
+templates/
+CLAUDE.md
+BRAINSTORMING_LOG.md
+PRD.md
+PROJECT_KANBAN.md
+PROJECT_SPEC.md
+
+# Maven build output
+**/target/
