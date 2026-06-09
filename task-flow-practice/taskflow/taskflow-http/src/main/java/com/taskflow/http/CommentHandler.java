@@ -6,6 +6,7 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.taskflow.domain.Comment;
 import com.taskflow.domain.User;
+import com.taskflow.persistence.AttachmentDao;
 import com.taskflow.service.CommentService;
 
 import java.io.IOException;
@@ -13,13 +14,15 @@ import java.io.InputStream;
 import java.util.List;
 
 /**
- * HTTP handler for nested comment routes under {@code /tasks/{taskId}/comments}.
+ * HTTP handler for nested routes under {@code /tasks/{taskId}/...}.
  *
  * <p>Route table:
  * <ul>
  *   <li>POST   /tasks/{taskId}/comments              → 201 + comment JSON</li>
  *   <li>GET    /tasks/{taskId}/comments              → 200 + array JSON</li>
  *   <li>DELETE /tasks/{taskId}/comments/{commentId} → 204 (own) | 403 (other user)</li>
+ *   <li>POST   /tasks/{taskId}/attachments           → 201 + attachment metadata JSON</li>
+ *   <li>GET    /tasks/{taskId}/attachments           → 200 + attachment array JSON</li>
  * </ul>
  *
  * <p>Registered at {@code "/tasks/"} context (trailing slash) so {@link com.sun.net.httpserver.HttpServer}
@@ -29,10 +32,13 @@ import java.util.List;
 public class CommentHandler implements HttpHandler {
 
     private final CommentService commentService;
+    private final AttachmentHandler attachmentHandler;
     private final ObjectMapper mapper;
 
-    public CommentHandler(CommentService commentService, ObjectMapper mapper) {
+    public CommentHandler(CommentService commentService, AttachmentDao attachmentDao,
+                          ObjectMapper mapper) {
         this.commentService = commentService;
+        this.attachmentHandler = new AttachmentHandler(attachmentDao, mapper);
         this.mapper = mapper;
     }
 
@@ -55,8 +61,8 @@ public class CommentHandler implements HttpHandler {
         String rawPath = exchange.getRequestURI().getPath();
         String[] segments = rawPath.split("/");
 
-        // Minimum: /tasks/{taskId}/comments → 4 segments
-        if (segments.length < 4 || !"comments".equals(segments[3])) {
+        // Minimum: /tasks/{taskId}/comments or /tasks/{taskId}/attachments → 4 segments
+        if (segments.length < 4) {
             AuthHandler.sendError(exchange, 404, "Not found");
             return;
         }
@@ -66,6 +72,17 @@ public class CommentHandler implements HttpHandler {
             taskId = Long.parseLong(segments[2]);
         } catch (NumberFormatException e) {
             AuthHandler.sendError(exchange, 400, "Task id must be numeric");
+            return;
+        }
+
+        // Dispatch attachment routes
+        if ("attachments".equals(segments[3])) {
+            attachmentHandler.handle(exchange, taskId);
+            return;
+        }
+
+        if (!"comments".equals(segments[3])) {
+            AuthHandler.sendError(exchange, 404, "Not found");
             return;
         }
 

@@ -3,6 +3,7 @@ package com.taskflow.http;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.sun.net.httpserver.HttpServer;
+import com.taskflow.persistence.AttachmentDao;
 import com.taskflow.persistence.CommentDao;
 import com.taskflow.persistence.DbConnection;
 import com.taskflow.persistence.ProjectDao;
@@ -62,6 +63,8 @@ public class Server {
         CommentDao commentDao = new CommentDao(db);
         CommentService commentService = new CommentService(commentDao, taskDao);
 
+        AttachmentDao attachmentDao = new AttachmentDao(db);
+
         StatsService statsService = new StatsService(taskDao);
 
         ObjectMapper mapper = new ObjectMapper()
@@ -88,7 +91,7 @@ public class Server {
 
         // "/tasks/" (trailing slash) has longer prefix than "/tasks" — routes sub-paths like
         // /tasks/{id}/comments to CommentHandler while /tasks and /tasks/{id} still go to TaskHandler
-        var commentsCtx = server.createContext("/tasks/", new CommentHandler(commentService, mapper));
+        var commentsCtx = server.createContext("/tasks/", new CommentHandler(commentService, attachmentDao, mapper));
         commentsCtx.getFilters().add(authFilter);
 
         // 6. JVM shutdown hook: stop server and close DB pool
