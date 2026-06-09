@@ -3,13 +3,14 @@ package com.taskflow.http;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.sun.net.httpserver.HttpServer;
-import com.taskflow.persistence.DbConnection;
 import com.taskflow.persistence.CommentDao;
+import com.taskflow.persistence.DbConnection;
 import com.taskflow.persistence.ProjectDao;
 import com.taskflow.persistence.TaskDao;
 import com.taskflow.persistence.UserDao;
 import com.taskflow.service.CommentService;
 import com.taskflow.service.ProjectService;
+import com.taskflow.service.StatsService;
 import com.taskflow.service.TaskService;
 import com.taskflow.service.TokenStore;
 import com.taskflow.service.UserService;
@@ -61,6 +62,8 @@ public class Server {
         CommentDao commentDao = new CommentDao(db);
         CommentService commentService = new CommentService(commentDao, taskDao);
 
+        StatsService statsService = new StatsService(taskDao);
+
         ObjectMapper mapper = new ObjectMapper()
                 .registerModule(new JavaTimeModule());
 
@@ -79,6 +82,9 @@ public class Server {
 
         var tasksCtx = server.createContext("/tasks", new TaskHandler(taskService, mapper));
         tasksCtx.getFilters().add(authFilter);
+
+        var dashboardCtx = server.createContext("/dashboard", new DashboardHandler(statsService, mapper));
+        dashboardCtx.getFilters().add(authFilter);
 
         // "/tasks/" (trailing slash) has longer prefix than "/tasks" — routes sub-paths like
         // /tasks/{id}/comments to CommentHandler while /tasks and /tasks/{id} still go to TaskHandler
