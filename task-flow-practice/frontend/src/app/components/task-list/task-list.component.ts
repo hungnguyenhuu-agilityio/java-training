@@ -1,14 +1,16 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { HttpParams } from '@angular/common/http';
 import { TaskService } from '../../services/task.service';
 import { Task, TaskCreateRequest } from '../../models/task.model';
 import { TaskFormComponent } from '../task-form/task-form.component';
 import { TaskItemComponent } from '../task-item/task-item.component';
+import { FilterBarComponent, FilterParams } from '../filter-bar/filter-bar.component';
 
 @Component({
   selector: 'app-task-list',
   standalone: true,
-  imports: [CommonModule, TaskFormComponent, TaskItemComponent],
+  imports: [CommonModule, TaskFormComponent, TaskItemComponent, FilterBarComponent],
   templateUrl: './task-list.component.html'
 })
 export class TaskListComponent implements OnInit {
@@ -20,16 +22,40 @@ export class TaskListComponent implements OnInit {
   loadError = '';
   formError = '';
 
+  searchTerm = '';
+  hasActiveApiFilters = false;
+
+  get filteredTasks(): Task[] {
+    if (!this.searchTerm) return this.tasks;
+    const term = this.searchTerm.toLowerCase();
+    return this.tasks.filter(t => t.title.toLowerCase().includes(term));
+  }
+
   ngOnInit(): void {
     this.loadTasks();
   }
 
-  loadTasks(): void {
+  loadTasks(params?: HttpParams): void {
     this.loadError = '';
-    this.taskService.getTasks().subscribe({
+    this.taskService.getTasks(params).subscribe({
       next: tasks => (this.tasks = tasks),
       error: () => (this.loadError = 'Failed to load tasks. Please try again.')
     });
+  }
+
+  onFiltersChanged(filters: FilterParams): void {
+    const { searchTerm, ...apiFilters } = filters;
+    this.searchTerm = searchTerm ?? '';
+
+    const hasApi = !!(apiFilters.status || apiFilters.priority || apiFilters.projectId);
+    this.hasActiveApiFilters = hasApi;
+
+    let params = new HttpParams();
+    if (apiFilters.status) params = params.set('status', apiFilters.status);
+    if (apiFilters.priority) params = params.set('priority', apiFilters.priority);
+    if (apiFilters.projectId) params = params.set('projectId', String(apiFilters.projectId));
+
+    this.loadTasks(hasApi ? params : undefined);
   }
 
   onCreate(payload: TaskCreateRequest): void {
