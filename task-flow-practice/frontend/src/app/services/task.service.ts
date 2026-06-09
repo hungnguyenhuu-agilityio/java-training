@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Task, TaskCreateRequest } from '../models/task.model';
 
@@ -8,8 +8,8 @@ export class TaskService {
   private http = inject(HttpClient);
   private baseUrl = '/api/tasks';
 
-  getTasks(): Observable<Task[]> {
-    return this.http.get<Task[]>(this.baseUrl);
+  getTasks(params?: HttpParams): Observable<Task[]> {
+    return this.http.get<Task[]>(this.baseUrl, { params });
   }
 
   createTask(task: TaskCreateRequest): Observable<Task> {
