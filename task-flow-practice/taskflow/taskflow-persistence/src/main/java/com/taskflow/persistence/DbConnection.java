@@ -32,9 +32,10 @@ public final class DbConnection {
         Properties props = loadProperties();
 
         HikariConfig config = new HikariConfig();
-        config.setJdbcUrl(getRequired(props, "db.url"));
-        config.setUsername(getRequired(props, "db.username"));
-        config.setPassword(getRequired(props, "db.password"));
+        // Env vars DB_URL / DB_USERNAME / DB_PASSWORD override config.properties (used in Docker)
+        config.setJdbcUrl(envOrProp("DB_URL", props, "db.url"));
+        config.setUsername(envOrProp("DB_USERNAME", props, "db.username"));
+        config.setPassword(envOrProp("DB_PASSWORD", props, "db.password"));
         config.setMaximumPoolSize(
                 Integer.parseInt(props.getProperty("db.pool.maximumPoolSize", "10")));
         config.setConnectionTimeout(
@@ -95,6 +96,14 @@ public final class DbConnection {
             throw new IllegalStateException("Failed to read config.properties: " + e.getMessage(), e);
         }
         return props;
+    }
+
+    private static String envOrProp(String envKey, Properties props, String propKey) {
+        String env = System.getenv(envKey);
+        if (env != null && !env.isBlank()) {
+            return env.trim();
+        }
+        return getRequired(props, propKey);
     }
 
     private static String getRequired(Properties props, String key) {
