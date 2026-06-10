@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, signal, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Task, TaskStatus, PRIORITY_LABELS } from '../../models/task.model';
 
@@ -6,13 +6,15 @@ import { Task, TaskStatus, PRIORITY_LABELS } from '../../models/task.model';
   selector: 'app-task-card',
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './task-card.component.html'
+  templateUrl: './task-card.component.html',
+  styleUrls: ['./task-card.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TaskCardComponent {
   @Input() task!: Task;
   @Output() statusChanged = new EventEmitter<{ task: Task; nextStatus: TaskStatus }>();
 
-  moving = false;
+  readonly moving = signal(false);
 
   readonly priorityLabels = PRIORITY_LABELS;
 
@@ -23,19 +25,18 @@ export class TaskCardComponent {
   }
 
   onMove(): void {
-    if (this.moving || !this.nextStatus) return;
-    this.moving = true;
+    if (this.moving() || !this.nextStatus) return;
+    this.moving.set(true);
     this.statusChanged.emit({ task: this.task, nextStatus: this.nextStatus });
   }
 
   onReset(): void {
-    if (this.moving) return;
-    this.moving = true;
+    if (this.moving()) return;
+    this.moving.set(true);
     this.statusChanged.emit({ task: this.task, nextStatus: 'TODO' });
   }
 
-  /** Called by parent after the PUT resolves (success or error) */
   resetMoving(): void {
-    this.moving = false;
+    this.moving.set(false);
   }
 }

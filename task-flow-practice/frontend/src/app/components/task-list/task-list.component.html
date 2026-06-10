@@ -1,32 +1,32 @@
 <div class="task-list-page">
   <header class="task-list-header">
     <h1>My Tasks</h1>
-    <button (click)="startCreate()" *ngIf="!showCreateForm && !editingTask">+ New Task</button>
+    <button (click)="startCreate()" *ngIf="!showCreateForm() && !editingTask()">+ New Task</button>
   </header>
 
-  <div *ngIf="loadError" class="error-banner" role="alert">{{ loadError }}</div>
+  <div *ngIf="loadError()" class="error-banner" role="alert">{{ loadError() }}</div>
 
   <app-filter-bar (filtersChanged)="onFiltersChanged($event)"></app-filter-bar>
 
-  <section *ngIf="showCreateForm" class="form-section">
+  <section *ngIf="showCreateForm()" class="form-section">
     <h2>New Task</h2>
-    <app-task-form [errorMessage]="formError" (submitted)="onCreate($event)" (cancelled)="cancelForm()"></app-task-form>
+    <app-task-form [errorMessage]="formError()" (submitted)="onCreate($event)" (cancelled)="cancelForm()"></app-task-form>
   </section>
 
-  <section *ngIf="editingTask" class="form-section">
+  <section *ngIf="editingTask()" class="form-section">
     <h2>Edit Task</h2>
-    <app-task-form [task]="editingTask" [errorMessage]="formError" (submitted)="onUpdate($event)" (cancelled)="cancelForm()"></app-task-form>
+    <app-task-form [task]="editingTask()" [errorMessage]="formError()" (submitted)="onUpdate($event)" (cancelled)="cancelForm()"></app-task-form>
   </section>
 
   <section class="task-list-body">
-    <p *ngIf="filteredTasks.length === 0 && !loadError && (hasActiveApiFilters || searchTerm)" class="empty-state">
+    <p *ngIf="filteredTasks().length === 0 && !loadError() && searchTerm()" class="empty-state">
       No tasks match your filters.
     </p>
-    <p *ngIf="filteredTasks.length === 0 && !loadError && !hasActiveApiFilters && !searchTerm" class="empty-state">
+    <p *ngIf="filteredTasks().length === 0 && !loadError() && !searchTerm()" class="empty-state">
       No tasks yet. Create your first task above.
     </p>
     <app-task-item
-      *ngFor="let task of filteredTasks"
+      *ngFor="let task of filteredTasks()"
       [task]="task"
       (editClicked)="startEdit($event)"
       (deleteClicked)="onDelete($event)">

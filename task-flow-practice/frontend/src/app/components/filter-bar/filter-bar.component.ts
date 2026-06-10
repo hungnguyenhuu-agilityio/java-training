@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, Output, EventEmitter, inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, Output, EventEmitter, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Subject, Subscription } from 'rxjs';
@@ -17,27 +17,31 @@ export interface FilterParams {
   selector: 'app-filter-bar',
   standalone: true,
   imports: [CommonModule, FormsModule],
-  templateUrl: './filter-bar.component.html'
+  templateUrl: './filter-bar.component.html',
+  styleUrls: ['./filter-bar.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FilterBarComponent implements OnInit, OnDestroy {
   private projectService = inject(ProjectService);
 
   @Output() filtersChanged = new EventEmitter<FilterParams>();
 
+  // Two-way bound via [(ngModel)] — plain properties work fine with OnPush
+  // because ngModel event handling marks the view dirty automatically.
   status = '';
   priority = '';
   projectId: number | '' = '';
   searchTerm = '';
 
-  projects: Project[] = [];
+  readonly projects = signal<Project[]>([]);
 
   private apiFilters$ = new Subject<FilterParams>();
   private sub = new Subscription();
 
   ngOnInit(): void {
     this.projectService.getProjects().subscribe({
-      next: projects => (this.projects = projects),
-      error: () => (this.projects = [])
+      next: projects => this.projects.set(projects),
+      error: () => this.projects.set([])
     });
 
     this.sub.add(

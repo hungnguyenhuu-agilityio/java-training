@@ -45,12 +45,12 @@
       }
     </div>
 
-    @if (errorMessage) {
-      <p class="error-banner" role="alert">{{ errorMessage }}</p>
+    @if (errorMessage()) {
+      <p class="error-banner" role="alert">{{ errorMessage() }}</p>
     }
 
-    <button type="submit" [disabled]="form.invalid || loading">
-      {{ loading ? 'Creating account…' : 'Create Account' }}
+    <button type="submit" [disabled]="form.invalid || loading()">
+      {{ loading() ? 'Creating account…' : 'Create Account' }}
     </button>
   </form>
 

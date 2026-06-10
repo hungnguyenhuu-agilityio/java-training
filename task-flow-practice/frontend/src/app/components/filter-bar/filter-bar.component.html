@@ -15,7 +15,7 @@
 
   <select [(ngModel)]="projectId" (ngModelChange)="onDropdownChange()" aria-label="Filter by project">
     <option value="">All projects</option>
-    <option *ngFor="let p of projects" [value]="p.id">{{ p.name }}</option>
+    <option *ngFor="let p of projects()" [value]="p.id">{{ p.name }}</option>
   </select>
 
   <input

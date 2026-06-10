@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -9,7 +9,8 @@ import { AuthService } from '../../services/auth.service';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, RouterLink],
   templateUrl: './register.component.html',
-  styleUrls: ['./register.component.css']
+  styleUrls: ['./register.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class RegisterComponent {
   private fb = inject(FormBuilder);
@@ -22,14 +23,14 @@ export class RegisterComponent {
     password: ['', [Validators.required, Validators.minLength(6)]]
   });
 
-  errorMessage = '';
-  loading = false;
+  readonly errorMessage = signal('');
+  readonly loading = signal(false);
 
   onSubmit(): void {
     if (this.form.invalid) return;
 
-    this.loading = true;
-    this.errorMessage = '';
+    this.loading.set(true);
+    this.errorMessage.set('');
     const { name, email, password } = this.form.value;
 
     this.authService.register(name!, email!, password!).subscribe({
@@ -37,11 +38,11 @@ export class RegisterComponent {
         this.router.navigate(['/login']);
       },
       error: (err) => {
-        this.loading = false;
+        this.loading.set(false);
         if (err.status === 409) {
-          this.errorMessage = 'Email already in use. Please choose a different one.';
+          this.errorMessage.set('Email already in use. Please choose a different one.');
         } else {
-          this.errorMessage = err.error?.message || 'Registration failed. Please try again.';
+          this.errorMessage.set(err.error?.message || 'Registration failed. Please try again.');
         }
       }
     });
