@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, signal, computed, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpParams } from '@angular/common/http';
 import { TaskService } from '../../services/task.service';
@@ -11,44 +11,43 @@ import { FilterBarComponent, FilterParams } from '../filter-bar/filter-bar.compo
   selector: 'app-task-list',
   standalone: true,
   imports: [CommonModule, TaskFormComponent, TaskItemComponent, FilterBarComponent],
-  templateUrl: './task-list.component.html'
+  templateUrl: './task-list.component.html',
+  styleUrls: ['./task-list.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TaskListComponent implements OnInit {
   private taskService = inject(TaskService);
 
-  tasks: Task[] = [];
-  showCreateForm = false;
-  editingTask: Task | null = null;
-  loadError = '';
-  formError = '';
+  readonly tasks = signal<Task[]>([]);
+  readonly showCreateForm = signal(false);
+  readonly editingTask = signal<Task | null>(null);
+  readonly loadError = signal('');
+  readonly formError = signal('');
+  readonly searchTerm = signal('');
 
-  searchTerm = '';
-  hasActiveApiFilters = false;
-
-  get filteredTasks(): Task[] {
-    if (!this.searchTerm) return this.tasks;
-    const term = this.searchTerm.toLowerCase();
-    return this.tasks.filter(t => t.title.toLowerCase().includes(term));
-  }
+  readonly filteredTasks = computed(() => {
+    const term = this.searchTerm().toLowerCase();
+    if (!term) return this.tasks();
+    return this.tasks().filter(t => t.title.toLowerCase().includes(term));
+  });
 
   ngOnInit(): void {
     this.loadTasks();
   }
 
   loadTasks(params?: HttpParams): void {
-    this.loadError = '';
+    this.loadError.set('');
     this.taskService.getTasks(params).subscribe({
-      next: tasks => (this.tasks = tasks),
-      error: () => (this.loadError = 'Failed to load tasks. Please try again.')
+      next: tasks => this.tasks.set(tasks),
+      error: () => this.loadError.set('Failed to load tasks. Please try again.')
     });
   }
 
   onFiltersChanged(filters: FilterParams): void {
     const { searchTerm, ...apiFilters } = filters;
-    this.searchTerm = searchTerm ?? '';
+    this.searchTerm.set(searchTerm ?? '');
 
     const hasApi = !!(apiFilters.status || apiFilters.priority || apiFilters.projectId);
-    this.hasActiveApiFilters = hasApi;
 
     let params = new HttpParams();
     if (apiFilters.status) params = params.set('status', apiFilters.status);
@@ -59,53 +58,54 @@ export class TaskListComponent implements OnInit {
   }
 
   onCreate(payload: TaskCreateRequest): void {
-    this.formError = '';
+    this.formError.set('');
     this.taskService.createTask(payload).subscribe({
       next: task => {
-        this.tasks = [...this.tasks, task];
-        this.showCreateForm = false;
+        this.tasks.update(list => [...list, task]);
+        this.showCreateForm.set(false);
       },
       error: err => {
-        this.formError = err?.error?.message ?? 'Failed to create task.';
+        this.formError.set(err?.error?.message ?? 'Failed to create task.');
       }
     });
   }
 
   onUpdate(payload: TaskCreateRequest): void {
-    if (!this.editingTask) return;
-    this.formError = '';
-    const id = this.editingTask.id;
+    const editing = this.editingTask();
+    if (!editing) return;
+    this.formError.set('');
+    const id = editing.id;
     this.taskService.updateTask(id, payload).subscribe({
       next: updated => {
-        this.tasks = this.tasks.map(t => (t.id === id ? updated : t));
-        this.editingTask = null;
+        this.tasks.update(list => list.map(t => (t.id === id ? updated : t)));
+        this.editingTask.set(null);
       },
       error: err => {
-        this.formError = err?.error?.message ?? 'Failed to update task.';
+        this.formError.set(err?.error?.message ?? 'Failed to update task.');
       }
     });
   }
 
   onDelete(id: number): void {
     this.taskService.deleteTask(id).subscribe({
-      next: () => (this.tasks = this.tasks.filter(t => t.id !== id)),
+      next: () => this.tasks.update(list => list.filter(t => t.id !== id)),
       error: () => alert('Failed to delete task.')
     });
   }
 
   startCreate(): void {
-    this.editingTask = null;
-    this.showCreateForm = true;
+    this.editingTask.set(null);
+    this.showCreateForm.set(true);
   }
 
   startEdit(task: Task): void {
-    this.showCreateForm = false;
-    this.editingTask = task;
+    this.showCreateForm.set(false);
+    this.editingTask.set(task);
   }
 
   cancelForm(): void {
-    this.showCreateForm = false;
-    this.editingTask = null;
-    this.formError = '';
+    this.showCreateForm.set(false);
+    this.editingTask.set(null);
+    this.formError.set('');
   }
 }

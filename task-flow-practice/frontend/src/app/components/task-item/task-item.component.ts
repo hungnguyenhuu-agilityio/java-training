@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Task, TASK_STATUS_LABELS, PRIORITY_LABELS } from '../../models/task.model';
 
@@ -6,15 +6,17 @@ import { Task, TASK_STATUS_LABELS, PRIORITY_LABELS } from '../../models/task.mod
   selector: 'app-task-item',
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './task-item.component.html'
+  templateUrl: './task-item.component.html',
+  styleUrls: ['./task-item.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TaskItemComponent {
   @Input() task!: Task;
   @Output() editClicked = new EventEmitter<Task>();
   @Output() deleteClicked = new EventEmitter<number>();
 
-  statusLabels = TASK_STATUS_LABELS;
-  priorityLabels = PRIORITY_LABELS;
+  readonly statusLabels = TASK_STATUS_LABELS;
+  readonly priorityLabels = PRIORITY_LABELS;
 
   onEdit(): void {
     this.editClicked.emit(this.task);

@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, ViewChildren, QueryList } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ViewChildren, QueryList, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Task, TaskStatus } from '../../models/task.model';
 import { TaskCardComponent } from '../task-card/task-card.component';
@@ -7,7 +7,9 @@ import { TaskCardComponent } from '../task-card/task-card.component';
   selector: 'app-kanban-column',
   standalone: true,
   imports: [CommonModule, TaskCardComponent],
-  templateUrl: './kanban-column.component.html'
+  templateUrl: './kanban-column.component.html',
+  styleUrls: ['./kanban-column.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class KanbanColumnComponent {
   @Input() title = '';
@@ -20,7 +22,6 @@ export class KanbanColumnComponent {
     this.statusChanged.emit(event);
   }
 
-  /** Reset the moving flag on the card matching the given task id */
   resetCard(taskId: number): void {
     const card = this.cards?.find(c => c.task.id === taskId);
     card?.resetMoving();

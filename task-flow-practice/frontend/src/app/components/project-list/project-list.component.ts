@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ProjectService } from '../../services/project.service';
@@ -8,18 +8,20 @@ import { Project } from '../../models/project.model';
   selector: 'app-project-list',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
-  templateUrl: './project-list.component.html'
+  templateUrl: './project-list.component.html',
+  styleUrls: ['./project-list.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ProjectListComponent implements OnInit {
   private projectService = inject(ProjectService);
   private fb = inject(FormBuilder);
 
-  projects: Project[] = [];
-  loadError = '';
-  showForm = false;
-  editingProject: Project | null = null;
-  deleteErrors: Record<number, string> = {};
-  formError = '';
+  readonly projects = signal<Project[]>([]);
+  readonly loadError = signal('');
+  readonly showForm = signal(false);
+  readonly editingProject = signal<Project | null>(null);
+  readonly deleteErrors = signal<Record<number, string>>({});
+  readonly formError = signal('');
 
   form!: FormGroup;
 
@@ -37,80 +39,83 @@ export class ProjectListComponent implements OnInit {
 
   private loadProjects(): void {
     this.projectService.getProjects().subscribe({
-      next: (data) => (this.projects = data),
-      error: () => (this.loadError = 'Failed to load projects.')
+      next: (data) => this.projects.set(data),
+      error: () => this.loadError.set('Failed to load projects.')
     });
   }
 
   openCreate(): void {
-    this.editingProject = null;
+    this.editingProject.set(null);
     this.initForm();
-    this.showForm = true;
+    this.showForm.set(true);
   }
 
   openEdit(project: Project): void {
-    this.editingProject = project;
+    this.editingProject.set(project);
     this.initForm(project);
-    this.showForm = true;
+    this.showForm.set(true);
   }
 
   cancelForm(): void {
-    this.showForm = false;
-    this.editingProject = null;
-    this.formError = '';
+    this.showForm.set(false);
+    this.editingProject.set(null);
+    this.formError.set('');
   }
 
   onSubmit(): void {
     if (this.form.invalid) return;
-    this.formError = '';
+    this.formError.set('');
     const value = this.form.value;
     const payload = {
       name: value.name.trim(),
       description: value.description || undefined
     };
 
-    if (this.editingProject) {
-      this.projectService.updateProject(this.editingProject.id, payload).subscribe({
+    const editing = this.editingProject();
+    if (editing) {
+      this.projectService.updateProject(editing.id, payload).subscribe({
         next: (updated) => {
-          const idx = this.projects.findIndex(p => p.id === updated.id);
-          if (idx !== -1) this.projects[idx] = updated;
+          const arr = this.projects();
+          const idx = arr.findIndex(p => p.id === updated.id);
+          if (idx !== -1) {
+            const next = [...arr];
+            next[idx] = updated;
+            this.projects.set(next);
+          }
           this.cancelForm();
         },
         error: (err) => {
-          this.formError = err?.error?.message ?? 'Failed to update project.';
+          this.formError.set(err?.error?.message ?? 'Failed to update project.');
         }
       });
     } else {
       this.projectService.createProject(payload).subscribe({
         next: (created) => {
-          this.projects = [...this.projects, created];
+          this.projects.update(list => [...list, created]);
           this.cancelForm();
         },
         error: (err) => {
-          this.formError = err?.error?.message ?? 'Failed to create project.';
+          this.formError.set(err?.error?.message ?? 'Failed to create project.');
         }
       });
     }
   }
 
   deleteProject(project: Project): void {
-    delete this.deleteErrors[project.id];
+    this.deleteErrors.update(errs => {
+      const next = { ...errs };
+      delete next[project.id];
+      return next;
+    });
     this.projectService.deleteProject(project.id).subscribe({
       next: () => {
-        this.projects = this.projects.filter(p => p.id !== project.id);
+        this.projects.update(list => list.filter(p => p.id !== project.id));
       },
       error: (err) => {
-        if (err.status === 409) {
-          this.deleteErrors = {
-            ...this.deleteErrors,
-            [project.id]: 'Project has tasks — delete tasks first'
-          };
-        } else {
-          this.deleteErrors = {
-            ...this.deleteErrors,
-            [project.id]: 'Failed to delete project.'
-          };
-        }
+        const msg = err.status === 409
+          ? 'Project has tasks — delete tasks first'
+          : 'Failed to delete project.';
+        this.deleteErrors.update(errs => ({ ...errs, [project.id]: msg }));
       }
     });
   }

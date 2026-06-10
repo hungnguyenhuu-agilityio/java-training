@@ -1,0 +1,28 @@
+@if (isLoggedIn) {
+  <nav class="navbar" aria-label="Main navigation">
+    <span class="navbar__brand">TaskFlow</span>
+    <ul class="navbar__links">
+      <li>
+        <a routerLink="/dashboard" routerLinkActive="navbar__link--active" ariaCurrentWhenActive="page">
+          Dashboard
+        </a>
+      </li>
+      <li>
+        <a routerLink="/tasks" routerLinkActive="navbar__link--active" ariaCurrentWhenActive="page">
+          Tasks
+        </a>
+      </li>
+      <li>
+        <a routerLink="/projects" routerLinkActive="navbar__link--active" ariaCurrentWhenActive="page">
+          Projects
+        </a>
+      </li>
+      <li>
+        <a routerLink="/kanban" routerLinkActive="navbar__link--active" ariaCurrentWhenActive="page">
+          Kanban
+        </a>
+      </li>
+    </ul>
+    <button class="navbar__logout" (click)="logout()">Logout</button>
+  </nav>
+}

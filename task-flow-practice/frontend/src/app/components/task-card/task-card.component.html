@@ -9,21 +9,21 @@
     @if (task.status !== 'DONE') {
       <button
         class="btn btn--move"
-        [disabled]="moving"
+        [disabled]="moving()"
         (click)="onMove()"
         aria-label="Move task to next status"
       >
-        {{ moving ? '…' : 'Move →' }}
+        {{ moving() ? '…' : 'Move →' }}
       </button>
     }
     @if (task.status === 'DONE') {
       <button
         class="btn btn--reset"
-        [disabled]="moving"
+        [disabled]="moving()"
         (click)="onReset()"
         aria-label="Reset task to TODO"
       >
-        {{ moving ? '…' : '← Reset' }}
+        {{ moving() ? '…' : '← Reset' }}
       </button>
     }
   </div>

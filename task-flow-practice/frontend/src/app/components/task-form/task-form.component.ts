@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnInit, inject } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Task, TaskCreateRequest, TaskStatus, TaskPriority } from '../../models/task.model';
@@ -9,7 +9,9 @@ import { Project } from '../../models/project.model';
   selector: 'app-task-form',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
-  templateUrl: './task-form.component.html'
+  templateUrl: './task-form.component.html',
+  styleUrls: ['./task-form.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TaskFormComponent implements OnInit {
   @Input() task: Task | null = null;
@@ -21,10 +23,10 @@ export class TaskFormComponent implements OnInit {
   private projectService = inject(ProjectService);
 
   form!: FormGroup;
-  projects: Project[] = [];
+  readonly projects = signal<Project[]>([]);
 
-  statuses: TaskStatus[] = ['TODO', 'IN_PROGRESS', 'DONE'];
-  priorities: TaskPriority[] = ['LOW', 'MEDIUM', 'HIGH'];
+  readonly statuses: TaskStatus[] = ['TODO', 'IN_PROGRESS', 'DONE'];
+  readonly priorities: TaskPriority[] = ['LOW', 'MEDIUM', 'HIGH'];
 
   ngOnInit(): void {
     this.form = this.fb.group({
@@ -37,7 +39,7 @@ export class TaskFormComponent implements OnInit {
     });
 
     this.projectService.getProjects().subscribe({
-      next: (data) => (this.projects = data),
+      next: (data) => this.projects.set(data),
       error: () => { /* leave projects empty — dropdown stays empty, form still usable */ }
     });
   }

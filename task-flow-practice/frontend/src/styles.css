@@ -10,7 +10,70 @@ body {
   min-height: 100vh;
 }
 
-/* Shared auth card */
+/* ── Base button reset — sizing is always component-scoped ─────────────────── */
+button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.45rem 1rem;
+  background: #4f46e5;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s;
+}
+
+button:hover:not(:disabled) {
+  background: #4338ca;
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+button.btn-danger {
+  background: #ef4444;
+}
+
+button.btn-danger:hover:not(:disabled) {
+  background: #dc2626;
+}
+
+button.btn-secondary {
+  background: transparent;
+  color: #374151;
+  border: 1px solid #d1d5db;
+}
+
+button.btn-secondary:hover:not(:disabled) {
+  background: #f3f4f6;
+}
+
+/* ── Page layout shell ──────────────────────────────────────────────────────── */
+.page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+}
+
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
+
+.page-header h1 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+/* ── Shared auth card ───────────────────────────────────────────────────────── */
 .auth-card {
   background: #fff;
   border-radius: 8px;
@@ -35,7 +98,14 @@ body {
   color: #555;
 }
 
-/* Form fields */
+/* Auth form submit button is the one case that should be full-width */
+.auth-card button[type="submit"] {
+  width: 100%;
+  padding: 0.75rem;
+  font-size: 1rem;
+}
+
+/* Form fields (auth pages) */
 .field {
   display: flex;
   flex-direction: column;
@@ -62,6 +132,7 @@ body {
   border-color: #4f46e5;
 }
 
+/* ── Shared feedback banners ────────────────────────────────────────────────── */
 .error {
   color: #dc2626;
   font-size: 0.8rem;
@@ -78,32 +149,14 @@ body {
   margin-bottom: 1rem;
 }
 
-/* Button */
-button[type="submit"],
-button {
-  width: 100%;
-  padding: 0.75rem;
-  background: #4f46e5;
-  color: #fff;
-  border: none;
-  border-radius: 6px;
-  font-size: 1rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background 0.15s;
+.empty-state {
+  color: #6b7280;
+  font-size: 0.95rem;
+  padding: 2rem 0;
+  text-align: center;
 }
 
-button[type="submit"]:hover:not(:disabled),
-button:hover:not(:disabled) {
-  background: #4338ca;
-}
-
-button:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-/* Switch link */
+/* Switch link (auth pages) */
 .switch-link {
   text-align: center;
   font-size: 0.875rem;

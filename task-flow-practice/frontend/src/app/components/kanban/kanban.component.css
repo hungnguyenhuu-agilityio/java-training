@@ -1,0 +1,31 @@
+.kanban {
+  padding: 1.5rem;
+}
+
+.kanban__heading {
+  margin: 0 0 1.25rem;
+  font-size: 1.5rem;
+}
+
+.kanban__loading,
+.kanban__error {
+  padding: 1rem 0;
+  font-size: 0.95rem;
+}
+
+.kanban__error {
+  color: #dc2626;
+}
+
+.kanban__board {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  align-items: start;
+}
+
+@media (max-width: 700px) {
+  .kanban__board {
+    grid-template-columns: 1fr;
+  }
+}
