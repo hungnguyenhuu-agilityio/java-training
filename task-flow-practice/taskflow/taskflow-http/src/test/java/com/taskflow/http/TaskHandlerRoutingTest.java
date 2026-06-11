@@ -26,6 +26,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Regression tests for TaskHandler routing.
@@ -95,10 +96,10 @@ class TaskHandlerRoutingTest {
     }
 
     /**
-     * PUT /tasks/{id} where the task is DONE must return 409 and must NOT call updateTask.
+     * PUT /tasks/{id} DONE without a status field → 409; other fields are rejected.
      */
     @Test
-    void updateTask_whenStatusIsDone_returns409() throws IOException {
+    void updateTask_whenStatusIsDone_withoutStatusField_returns409() throws IOException {
         Task done = new Task();
         done.setId(10L);
         done.setTitle("Finished task");
@@ -116,7 +117,32 @@ class TaskHandlerRoutingTest {
 
         assertEquals(409, exchange.responseCode);
         assertFalse(taskService.updateTaskCalled,
-                "updateTask must not be called for a DONE task");
+                "updateTask must not be called when DONE task body has no status field");
+    }
+
+    /**
+     * PUT /tasks/{id} DONE with a valid status field → 200 (Kanban move-back allowed).
+     */
+    @Test
+    void updateTask_whenStatusIsDone_withStatusField_returns200() throws IOException {
+        Task done = new Task();
+        done.setId(12L);
+        done.setTitle("Finished task");
+        done.setStatus(TaskStatus.DONE);
+        done.setUserId(1L);
+        taskService.stubbedTask = done;
+
+        TaskHandler handler = new TaskHandler(taskService, mapper, commentHandler);
+
+        FakeExchange exchange = new FakeExchange("PUT", "/tasks/12",
+                "{\"status\":\"IN_PROGRESS\"}");
+        setUser(exchange, 1L);
+
+        handler.handle(exchange);
+
+        assertEquals(200, exchange.responseCode);
+        assertTrue(taskService.updateTaskCalled,
+                "updateTask must be called when DONE task provides a new status");
     }
 
     /**

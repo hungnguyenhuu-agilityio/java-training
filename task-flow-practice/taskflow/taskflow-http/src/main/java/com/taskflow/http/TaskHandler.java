@@ -235,23 +235,16 @@ public class TaskHandler implements HttpHandler {
             return;
         }
 
-        // DONE tasks are immutable
-        if (TaskStatus.DONE.equals(current.getStatus())) {
-            AuthHandler.sendError(exchange, 409, "Task is already DONE and cannot be edited");
-            return;
-        }
-
         JsonNode body = parseBody(exchange);
         if (body == null) return;
 
-        String title = textOrNull(body, "title");
-        if (title != null) current.setTitle(title);
-
-        String description = textOrNull(body, "description");
-        if (description != null) current.setDescription(description);
-
-        String statusRaw = textOrNull(body, "status");
-        if (statusRaw != null) {
+        // DONE tasks: only the status field may be changed (e.g. moving back via Kanban)
+        if (TaskStatus.DONE.equals(current.getStatus())) {
+            String statusRaw = textOrNull(body, "status");
+            if (statusRaw == null) {
+                AuthHandler.sendError(exchange, 409, "Task is already DONE; only status can be changed");
+                return;
+            }
             try {
                 current.setStatus(TaskStatus.valueOf(statusRaw.toUpperCase()));
             } catch (IllegalArgumentException e) {
@@ -259,32 +252,49 @@ public class TaskHandler implements HttpHandler {
                         "Invalid status '" + statusRaw + "'; allowed: TODO, IN_PROGRESS, DONE");
                 return;
             }
-        }
+        } else {
+            String title = textOrNull(body, "title");
+            if (title != null) current.setTitle(title);
 
-        String priorityRaw = textOrNull(body, "priority");
-        if (priorityRaw != null) {
-            try {
-                current.setPriority(Priority.valueOf(priorityRaw.toUpperCase()));
-            } catch (IllegalArgumentException e) {
-                AuthHandler.sendError(exchange, 400,
-                        "Invalid priority '" + priorityRaw + "'; allowed: LOW, MEDIUM, HIGH");
-                return;
+            String description = textOrNull(body, "description");
+            if (description != null) current.setDescription(description);
+
+            String statusRaw = textOrNull(body, "status");
+            if (statusRaw != null) {
+                try {
+                    current.setStatus(TaskStatus.valueOf(statusRaw.toUpperCase()));
+                } catch (IllegalArgumentException e) {
+                    AuthHandler.sendError(exchange, 400,
+                            "Invalid status '" + statusRaw + "'; allowed: TODO, IN_PROGRESS, DONE");
+                    return;
+                }
             }
-        }
 
-        String dueDateRaw = textOrNull(body, "dueDate");
-        if (dueDateRaw != null) {
-            try {
-                current.setDueDate(LocalDate.parse(dueDateRaw));
-            } catch (Exception e) {
-                AuthHandler.sendError(exchange, 400, "Invalid dueDate format; expected ISO (yyyy-MM-dd)");
-                return;
+            String priorityRaw = textOrNull(body, "priority");
+            if (priorityRaw != null) {
+                try {
+                    current.setPriority(Priority.valueOf(priorityRaw.toUpperCase()));
+                } catch (IllegalArgumentException e) {
+                    AuthHandler.sendError(exchange, 400,
+                            "Invalid priority '" + priorityRaw + "'; allowed: LOW, MEDIUM, HIGH");
+                    return;
+                }
             }
-        }
 
-        JsonNode projectIdNode = body.get("projectId");
-        if (projectIdNode != null && !projectIdNode.isNull()) {
-            current.setProjectId(projectIdNode.asLong());
+            String dueDateRaw = textOrNull(body, "dueDate");
+            if (dueDateRaw != null) {
+                try {
+                    current.setDueDate(LocalDate.parse(dueDateRaw));
+                } catch (Exception e) {
+                    AuthHandler.sendError(exchange, 400, "Invalid dueDate format; expected ISO (yyyy-MM-dd)");
+                    return;
+                }
+            }
+
+            JsonNode projectIdNode = body.get("projectId");
+            if (projectIdNode != null && !projectIdNode.isNull()) {
+                current.setProjectId(projectIdNode.asLong());
+            }
         }
 
         try {
