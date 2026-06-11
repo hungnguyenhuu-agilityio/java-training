@@ -235,6 +235,12 @@ public class TaskHandler implements HttpHandler {
             return;
         }
 
+        // DONE tasks are immutable
+        if (TaskStatus.DONE.equals(current.getStatus())) {
+            AuthHandler.sendError(exchange, 409, "Task is already DONE and cannot be edited");
+            return;
+        }
+
         JsonNode body = parseBody(exchange);
         if (body == null) return;
 

@@ -6,6 +6,7 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpPrincipal;
 import com.taskflow.domain.Comment;
 import com.taskflow.domain.Task;
+import com.taskflow.domain.TaskStatus;
 import com.taskflow.domain.User;
 import com.taskflow.persistence.AttachmentDao;
 import com.taskflow.service.CommentService;
@@ -94,6 +95,54 @@ class TaskHandlerRoutingTest {
     }
 
     /**
+     * PUT /tasks/{id} where the task is DONE must return 409 and must NOT call updateTask.
+     */
+    @Test
+    void updateTask_whenStatusIsDone_returns409() throws IOException {
+        Task done = new Task();
+        done.setId(10L);
+        done.setTitle("Finished task");
+        done.setStatus(TaskStatus.DONE);
+        done.setUserId(1L);
+        taskService.stubbedTask = done;
+
+        TaskHandler handler = new TaskHandler(taskService, mapper, commentHandler);
+
+        FakeExchange exchange = new FakeExchange("PUT", "/tasks/10",
+                "{\"title\":\"new title\"}");
+        setUser(exchange, 1L);
+
+        handler.handle(exchange);
+
+        assertEquals(409, exchange.responseCode);
+        assertFalse(taskService.updateTaskCalled,
+                "updateTask must not be called for a DONE task");
+    }
+
+    /**
+     * PUT /tasks/{id} where the task is IN_PROGRESS must succeed (200).
+     */
+    @Test
+    void updateTask_whenStatusIsNotDone_returns200() throws IOException {
+        Task inProgress = new Task();
+        inProgress.setId(11L);
+        inProgress.setTitle("Active task");
+        inProgress.setStatus(TaskStatus.IN_PROGRESS);
+        inProgress.setUserId(1L);
+        taskService.stubbedTask = inProgress;
+
+        TaskHandler handler = new TaskHandler(taskService, mapper, commentHandler);
+
+        FakeExchange exchange = new FakeExchange("PUT", "/tasks/11",
+                "{\"title\":\"updated title\"}");
+        setUser(exchange, 1L);
+
+        handler.handle(exchange);
+
+        assertEquals(200, exchange.responseCode);
+    }
+
+    /**
      * GET /tasks/42/comments must be delegated to CommentHandler (returns 200 + empty array).
      * TaskService.getTaskById must NOT be consulted for sub-resource paths.
      */
@@ -128,6 +177,7 @@ class TaskHandlerRoutingTest {
     static class StubTaskService extends TaskService {
         Task stubbedTask;
         boolean getByIdCalled = false;
+        boolean updateTaskCalled = false;
 
         StubTaskService() { super(null); }
 
@@ -135,6 +185,12 @@ class TaskHandlerRoutingTest {
         public Optional<Task> getTaskById(long id) {
             getByIdCalled = true;
             return Optional.ofNullable(stubbedTask);
+        }
+
+        @Override
+        public Task updateTask(Task task) {
+            updateTaskCalled = true;
+            return task;
         }
 
         @Override
@@ -159,6 +215,7 @@ class TaskHandlerRoutingTest {
     static class FakeExchange extends HttpExchange {
         private final String method;
         private final String path;
+        private final byte[] requestBody;
         private final Map<String, Object> attrs = new HashMap<>();
         int responseCode = -1;
         final ByteArrayOutputStream responseBody = new ByteArrayOutputStream();
@@ -166,8 +223,13 @@ class TaskHandlerRoutingTest {
         private final com.sun.net.httpserver.Headers resHeaders = new com.sun.net.httpserver.Headers();
 
         FakeExchange(String method, String path) {
+            this(method, path, "");
+        }
+
+        FakeExchange(String method, String path, String body) {
             this.method = method;
             this.path = path;
+            this.requestBody = body.getBytes(java.nio.charset.StandardCharsets.UTF_8);
         }
 
         @Override public String getRequestMethod() { return method; }
@@ -176,7 +238,7 @@ class TaskHandlerRoutingTest {
         }
         @Override public com.sun.net.httpserver.Headers getRequestHeaders() { return reqHeaders; }
         @Override public com.sun.net.httpserver.Headers getResponseHeaders() { return resHeaders; }
-        @Override public java.io.InputStream getRequestBody() { return new ByteArrayInputStream(new byte[0]); }
+        @Override public java.io.InputStream getRequestBody() { return new ByteArrayInputStream(requestBody); }
         @Override public java.io.OutputStream getResponseBody() { return responseBody; }
         @Override public void sendResponseHeaders(int code, long length) { this.responseCode = code; }
         @Override public void close() {}
