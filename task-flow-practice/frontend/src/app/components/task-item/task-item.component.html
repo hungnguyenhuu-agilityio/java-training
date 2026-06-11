@@ -10,7 +10,7 @@
     <span *ngIf="task.dueDate" class="due-date">{{ task.dueDate }}</span>
   </div>
   <div class="task-actions">
-    <button (click)="onEdit()" aria-label="Edit task">Edit</button>
+    <button (click)="onEdit()" [disabled]="task.status === 'DONE'" aria-label="Edit task">Edit</button>
     <button (click)="onDelete()" class="btn-danger" aria-label="Delete task">Delete</button>
   </div>
 </div>

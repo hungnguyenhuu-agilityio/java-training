@@ -13,9 +13,7 @@ import { AuthService } from '../../services/auth.service';
 export class NavbarComponent {
   private authService = inject(AuthService);
 
-  get isLoggedIn(): boolean {
-    return this.authService.isLoggedIn();
-  }
+  readonly isLoggedIn = this.authService.loggedIn;
 
   logout(): void {
     this.authService.logout();

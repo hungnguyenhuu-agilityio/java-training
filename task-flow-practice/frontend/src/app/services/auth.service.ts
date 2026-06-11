@@ -1,4 +1,4 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
@@ -10,6 +10,9 @@ export class AuthService {
   private http = inject(HttpClient);
   private router = inject(Router);
 
+  // Reactive signal so OnPush components re-render without polling
+  readonly loggedIn = signal<boolean>(!!localStorage.getItem(TOKEN_KEY));
+
   login(email: string, password: string): Observable<{ token: string }> {
     return this.http.post<{ token: string }>('/api/auth/login', { email, password });
   }
@@ -20,6 +23,7 @@ export class AuthService {
 
   logout(): void {
     localStorage.removeItem(TOKEN_KEY);
+    this.loggedIn.set(false);
     this.router.navigate(['/login']);
   }
 
@@ -33,5 +37,6 @@ export class AuthService {
 
   storeToken(token: string): void {
     localStorage.setItem(TOKEN_KEY, token);
+    this.loggedIn.set(true);
   }
 }
