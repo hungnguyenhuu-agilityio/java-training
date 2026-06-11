@@ -19,6 +19,7 @@ export class TaskItemComponent {
   readonly priorityLabels = PRIORITY_LABELS;
 
   onEdit(): void {
+    if (this.task.status === 'DONE') return;
     this.editClicked.emit(this.task);
   }
 
