@@ -87,16 +87,12 @@ public class Server {
         var projectsCtx = server.createContext("/projects", new ProjectHandler(projectService, mapper));
         projectsCtx.getFilters().add(authFilter);
 
-        var tasksCtx = server.createContext("/tasks", new TaskHandler(taskService, mapper));
+        CommentHandler commentHandler = new CommentHandler(commentService, attachmentDao, mapper);
+        var tasksCtx = server.createContext("/tasks", new TaskHandler(taskService, mapper, commentHandler));
         tasksCtx.getFilters().add(authFilter);
 
         var dashboardCtx = server.createContext("/dashboard", new DashboardHandler(statsService, mapper));
         dashboardCtx.getFilters().add(authFilter);
-
-        // "/tasks/" (trailing slash) has longer prefix than "/tasks" — routes sub-paths like
-        // /tasks/{id}/comments to CommentHandler while /tasks and /tasks/{id} still go to TaskHandler
-        var commentsCtx = server.createContext("/tasks/", new CommentHandler(commentService, attachmentDao, mapper));
-        commentsCtx.getFilters().add(authFilter);
 
         // 6. JVM shutdown hook: stop server and close DB pool
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {

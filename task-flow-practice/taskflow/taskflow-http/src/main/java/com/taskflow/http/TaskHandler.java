@@ -40,10 +40,12 @@ public class TaskHandler implements HttpHandler {
 
     private final TaskService taskService;
     private final ObjectMapper mapper;
+    private final CommentHandler commentHandler;
 
-    public TaskHandler(TaskService taskService, ObjectMapper mapper) {
+    public TaskHandler(TaskService taskService, ObjectMapper mapper, CommentHandler commentHandler) {
         this.taskService = taskService;
         this.mapper = mapper;
+        this.commentHandler = commentHandler;
     }
 
     @Override
@@ -76,6 +78,11 @@ public class TaskHandler implements HttpHandler {
         boolean hasId = segments.length >= 3 && !segments[2].isBlank();
 
         if (hasId) {
+            // Delegate sub-resource paths like /tasks/{id}/comments to CommentHandler
+            if (segments.length >= 4) {
+                commentHandler.handle(exchange);
+                return;
+            }
             long id;
             try {
                 id = Long.parseLong(segments[2]);
