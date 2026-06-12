@@ -71,14 +71,133 @@ mvn test
 
 ## Configuration
 
-All configuration is in `taskflow-persistence/src/main/resources/db.properties` (or equivalent — check `DbConnection.java` for the property names):
+### Database connection
 
-| Property | Default | Description |
-|----------|---------|-------------|
-| `db.url` | `jdbc:mysql://localhost:3307/taskflow_db` | JDBC URL |
-| `db.username` | `root` | DB user |
-| `db.password` | `root` | DB password |
-| `db.pool.size` | `10` | HikariCP max pool size |
+The database connection is configured by `DbConnection.java` (a HikariCP pool
+singleton) in the `taskflow-persistence` module. It loads
+`taskflow-persistence/src/main/resources/config.properties` from the classpath
+on first use; if the file is missing it fails fast with a clear
+`IllegalStateException` (never an NPE).
+
+| Property | Default (`config.properties`) | Description |
+|----------|-------------------------------|-------------|
+| `db.url` | `jdbc:mysql://localhost:3307/taskflow_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC` | JDBC URL |
+| `db.username` | `taskflow` | DB user |
+| `db.password` | `taskflow` | DB password |
+| `db.pool.maximumPoolSize` | `10` | HikariCP max pool size |
+| `db.pool.connectionTimeout` | `30000` | Connection timeout (ms) |
+
+The pool name is fixed to `TaskFlowPool`.
+
+### Environment-variable overrides (Docker)
+
+For the three connection credentials, environment variables take precedence over
+`config.properties` when set and non-blank — this is how `docker-compose.yml`
+points the app at the `db` service. The pool-size and timeout settings are read
+only from `config.properties`.
+
+| Env var | Overrides property |
+|---------|--------------------|
+| `DB_URL` | `db.url` |
+| `DB_USERNAME` | `db.username` |
+| `DB_PASSWORD` | `db.password` |
+
+Example (matching the Compose setup):
+
+```bash
+export DB_URL="jdbc:mysql://db:3306/taskflow_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC"
+export DB_USERNAME=taskflow
+export DB_PASSWORD=taskflow
+```
+
+> **Note:** local runs use MySQL on host port **3307** (`db.url` default), while
+> inside Docker the app reaches MySQL on the internal port **3306** via the
+> `DB_URL` override.
+
+---
+
+## Database schema & relationships
+
+Five tables, defined in `db/migrations/V1__init.sql` (InnoDB, `utf8mb4`). Every
+relationship is a real `FOREIGN KEY` constraint.
+
+### Entity-relationship diagram
+
+```mermaid
+erDiagram
+    users ||--o{ projects    : "owns (owner_id)"
+    users ||--o{ tasks       : "assigned (assignee_id)"
+    users ||--o{ comments    : "authors (author_id)"
+    users ||--o{ attachments : "uploads (uploaded_by)"
+    projects ||--o{ tasks    : "contains (project_id, nullable)"
+    tasks ||--o{ comments    : "has (task_id)"
+    tasks ||--o{ attachments : "has (task_id)"
+
+    users {
+        bigint id PK
+        varchar email UK
+        varchar username UK
+        varchar password
+        datetime created_at
+        datetime updated_at
+    }
+    projects {
+        bigint id PK
+        varchar name
+        text description
+        bigint owner_id FK
+        datetime created_at
+        datetime updated_at
+    }
+    tasks {
+        bigint id PK
+        varchar title
+        text description
+        enum status
+        enum priority
+        date due_date
+        bigint project_id FK
+        bigint assignee_id FK
+        datetime created_at
+        datetime updated_at
+    }
+    comments {
+        bigint id PK
+        text body
+        bigint task_id FK
+        bigint author_id FK
+        datetime created_at
+        datetime updated_at
+    }
+    attachments {
+        bigint id PK
+        varchar original_name
+        varchar stored_name
+        varchar mime_type
+        bigint size_bytes
+        bigint task_id FK
+        bigint uploaded_by FK
+        datetime created_at
+    }
+```
+
+### Relationships
+
+| Child table | Column | → Parent | Cardinality | Nullable | FK constraint |
+|-------------|--------|----------|-------------|----------|---------------|
+| `projects` | `owner_id` | `users.id` | many projects → one owner | No | `fk_projects_owner` |
+| `tasks` | `project_id` | `projects.id` | many tasks → one project | **Yes** (task can be unassigned to a project) | `fk_tasks_project` |
+| `tasks` | `assignee_id` | `users.id` | many tasks → one assignee | **Yes** | `fk_tasks_assignee` |
+| `comments` | `task_id` | `tasks.id` | many comments → one task | No | `fk_comments_task` |
+| `comments` | `author_id` | `users.id` | many comments → one author | No | `fk_comments_author` |
+| `attachments` | `task_id` | `tasks.id` | many attachments → one task | No | `fk_attachments_task` |
+| `attachments` | `uploaded_by` | `users.id` | many attachments → one uploader | No | `fk_attachments_uploader` |
+
+Notes:
+- No `ON DELETE CASCADE` is defined. Deleting a `project` that still has `tasks`
+  is rejected at the application layer (`ProjectHasTasksException` → HTTP `409`).
+- `users.email` and `users.username` are both `UNIQUE`.
+- The domain field `Task.userId` maps to the `tasks.assignee_id` column.
 
 ---
 
