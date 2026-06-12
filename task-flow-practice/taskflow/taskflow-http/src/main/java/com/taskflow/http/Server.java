@@ -81,6 +81,11 @@ public class Server {
         // 4. Register public auth endpoints (no filter)
         server.createContext("/auth", new AuthHandler(userService, mapper));
 
+        // 4b. Register public API documentation (Swagger UI + OpenAPI spec, no filter)
+        SwaggerHandler swaggerHandler = new SwaggerHandler();
+        server.createContext("/swagger", swaggerHandler);
+        server.createContext("/openapi.yaml", swaggerHandler);
+
         // 5. Register protected endpoints with AuthFilter
         AuthFilter authFilter = new AuthFilter(tokenStore);
 
@@ -104,5 +109,6 @@ public class Server {
 
         server.start();
         log.info("TaskFlow server started on http://localhost:" + PORT);
+        log.info("API docs (Swagger UI) at http://localhost:" + PORT + "/swagger");
     }
 }
