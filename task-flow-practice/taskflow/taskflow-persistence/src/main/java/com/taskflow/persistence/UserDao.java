@@ -1,6 +1,7 @@
 package com.taskflow.persistence;
 
 import com.taskflow.domain.User;
+import com.taskflow.domain.UserRepository;
 
 import java.sql.*;
 import java.time.Instant;
@@ -11,7 +12,7 @@ import java.util.Optional;
  *
  * <p>All SQL uses {@link PreparedStatement} — no string concatenation (NFR-006).
  */
-public class UserDao {
+public class UserDao implements UserRepository {
 
     private final DbConnection db;
 

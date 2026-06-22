@@ -3,7 +3,7 @@ package com.taskflow.service;
 import com.taskflow.domain.Priority;
 import com.taskflow.domain.Task;
 import com.taskflow.domain.TaskStatus;
-import com.taskflow.persistence.TaskDao;
+import com.taskflow.domain.TaskRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -32,13 +32,9 @@ class NotificationSchedulerTest {
     // Stub DAO
     // -------------------------------------------------------------------------
 
-    private static class StubTaskDao extends TaskDao {
+    private static class StubTaskDao implements TaskRepository {
         private List<Task> dueSoonResult = new ArrayList<>();
         private boolean throwOnFindDueSoon = false;
-
-        StubTaskDao() {
-            super(null);
-        }
 
         void setDueSoonResult(List<Task> tasks) {
             this.dueSoonResult = tasks;

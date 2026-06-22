@@ -3,7 +3,7 @@ package com.taskflow.service;
 import com.taskflow.domain.Priority;
 import com.taskflow.domain.Task;
 import com.taskflow.domain.TaskStatus;
-import com.taskflow.persistence.TaskDao;
+import com.taskflow.domain.TaskRepository;
 
 import java.util.List;
 import java.util.Map;
@@ -19,9 +19,9 @@ import java.util.stream.Stream;
  */
 public class TaskService {
 
-    private final TaskDao taskDao;
+    private final TaskRepository taskDao;
 
-    public TaskService(TaskDao taskDao) {
+    public TaskService(TaskRepository taskDao) {
         this.taskDao = taskDao;
     }
 

@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.net.httpserver.HttpExchange;
 import com.taskflow.domain.Attachment;
 import com.taskflow.domain.User;
-import com.taskflow.persistence.AttachmentDao;
+import com.taskflow.domain.AttachmentRepository;
 import com.taskflow.util.FileUploadUtil;
 
 import java.io.IOException;
@@ -30,10 +30,10 @@ public class AttachmentHandler {
 
     private static final long MAX_CONTENT_LENGTH = FileUploadUtil.MAX_BYTES;
 
-    private final AttachmentDao attachmentDao;
+    private final AttachmentRepository attachmentDao;
     private final ObjectMapper mapper;
 
-    public AttachmentHandler(AttachmentDao attachmentDao, ObjectMapper mapper) {
+    public AttachmentHandler(AttachmentRepository attachmentDao, ObjectMapper mapper) {
         this.attachmentDao = attachmentDao;
         this.mapper = mapper;
     }

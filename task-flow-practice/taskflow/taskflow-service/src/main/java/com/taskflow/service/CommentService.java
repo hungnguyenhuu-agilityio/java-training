@@ -1,8 +1,8 @@
 package com.taskflow.service;
 
 import com.taskflow.domain.Comment;
-import com.taskflow.persistence.CommentDao;
-import com.taskflow.persistence.TaskDao;
+import com.taskflow.domain.CommentRepository;
+import com.taskflow.domain.TaskRepository;
 
 import java.time.Instant;
 import java.util.List;
@@ -14,10 +14,10 @@ import java.util.List;
  */
 public class CommentService {
 
-    private final CommentDao commentDao;
-    private final TaskDao taskDao;
+    private final CommentRepository commentDao;
+    private final TaskRepository taskDao;
 
-    public CommentService(CommentDao commentDao, TaskDao taskDao) {
+    public CommentService(CommentRepository commentDao, TaskRepository taskDao) {
         this.commentDao = commentDao;
         this.taskDao = taskDao;
     }

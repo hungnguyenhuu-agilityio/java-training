@@ -1,6 +1,7 @@
 package com.taskflow.persistence;
 
 import com.taskflow.domain.Comment;
+import com.taskflow.domain.CommentRepository;
 
 import java.sql.*;
 import java.time.Instant;
@@ -13,7 +14,7 @@ import java.util.Optional;
  *
  * <p>All SQL uses {@link PreparedStatement} — no string concatenation (NFR-006).
  */
-public class CommentDao {
+public class CommentDao implements CommentRepository {
 
     private final DbConnection db;
 

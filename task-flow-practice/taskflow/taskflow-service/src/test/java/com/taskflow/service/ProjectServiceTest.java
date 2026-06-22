@@ -2,7 +2,7 @@ package com.taskflow.service;
 
 import com.taskflow.domain.Project;
 import com.taskflow.domain.ProjectHasTasksException;
-import com.taskflow.persistence.ProjectDao;
+import com.taskflow.domain.ProjectRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,14 +21,10 @@ import static org.junit.jupiter.api.Assertions.*;
 class ProjectServiceTest {
 
     /** Minimal in-memory stub for ProjectDao. */
-    private static class StubProjectDao extends ProjectDao {
+    private static class StubProjectDao implements ProjectRepository {
         private final java.util.Map<Long, Project> store = new java.util.LinkedHashMap<>();
         private long nextId = 1;
         private boolean throwOnDelete = false;
-
-        StubProjectDao() {
-            super(null);
-        }
 
         @Override
         public Project insert(Project p) {

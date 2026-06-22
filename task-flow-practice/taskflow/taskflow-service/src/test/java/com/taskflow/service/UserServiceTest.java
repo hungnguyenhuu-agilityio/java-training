@@ -1,7 +1,7 @@
 package com.taskflow.service;
 
 import com.taskflow.domain.User;
-import com.taskflow.persistence.UserDao;
+import com.taskflow.domain.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,12 +20,8 @@ import static org.junit.jupiter.api.Assertions.*;
 class UserServiceTest {
 
     /** Minimal stub: stores one user by email for lookup. */
-    private static class StubUserDao extends UserDao {
+    private static class StubUserDao implements UserRepository {
         private User stored;
-
-        StubUserDao() {
-            super(null); // no DB connection needed
-        }
 
         @Override
         public User insert(User user) {

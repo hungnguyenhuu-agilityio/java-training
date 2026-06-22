@@ -2,6 +2,7 @@ package com.taskflow.persistence;
 
 import com.taskflow.domain.Project;
 import com.taskflow.domain.ProjectHasTasksException;
+import com.taskflow.domain.ProjectRepository;
 
 import java.sql.*;
 import java.time.Instant;
@@ -18,7 +19,7 @@ import java.util.Optional;
  * by MySQL when tasks still reference the project and re-throws it as the checked
  * {@link ProjectHasTasksException}.
  */
-public class ProjectDao {
+public class ProjectDao implements ProjectRepository {
 
     private final DbConnection db;
 

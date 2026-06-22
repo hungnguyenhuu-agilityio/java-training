@@ -2,6 +2,7 @@ package com.taskflow.persistence;
 
 import com.taskflow.domain.Priority;
 import com.taskflow.domain.Task;
+import com.taskflow.domain.TaskRepository;
 import com.taskflow.domain.TaskStatus;
 
 import java.sql.*;
@@ -17,7 +18,7 @@ import java.util.Optional;
  * Column mapping: {@code assignee_id} ↔ {@link Task#getUserId()},
  * {@code project_id} ↔ {@link Task#getProjectId()}.
  */
-public class TaskDao {
+public class TaskDao implements TaskRepository {
 
     private final DbConnection db;
 

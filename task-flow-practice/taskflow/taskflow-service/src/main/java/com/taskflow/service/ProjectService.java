@@ -2,7 +2,7 @@ package com.taskflow.service;
 
 import com.taskflow.domain.Project;
 import com.taskflow.domain.ProjectHasTasksException;
-import com.taskflow.persistence.ProjectDao;
+import com.taskflow.domain.ProjectRepository;
 
 import java.time.Instant;
 import java.util.List;
@@ -17,9 +17,9 @@ import java.util.Optional;
  */
 public class ProjectService {
 
-    private final ProjectDao projectDao;
+    private final ProjectRepository projectDao;
 
-    public ProjectService(ProjectDao projectDao) {
+    public ProjectService(ProjectRepository projectDao) {
         this.projectDao = projectDao;
     }
 
