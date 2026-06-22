@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
+import com.taskflow.domain.PageResponse;
 import com.taskflow.domain.Priority;
 import com.taskflow.domain.Task;
 import com.taskflow.domain.TaskStatus;
@@ -186,12 +187,17 @@ public class TaskHandler implements HttpHandler {
     }
 
     private void handleList(HttpExchange exchange) throws IOException {
-        // parse query params
-        Map<String, String> filters = parseQueryParams(exchange);
+        Map<String, String> params = parseQueryParams(exchange);
+        Pagination pagination = Pagination.from(params);
+
+        // Remove pagination keys so service only sees filter params
+        Map<String, String> filters = new HashMap<>(params);
+        filters.remove("page");
+        filters.remove("size");
 
         try {
-            List<Task> tasks = taskService.getTasks(filters);
-            AuthHandler.sendResponse(exchange, 200, mapper.writeValueAsString(tasks));
+            List<Task> all = taskService.getTasks(filters);
+            AuthHandler.sendResponse(exchange, 200, mapper.writeValueAsString(pagination.apply(all)));
         } catch (IllegalArgumentException e) {
             AuthHandler.sendError(exchange, 400, e.getMessage());
         }
