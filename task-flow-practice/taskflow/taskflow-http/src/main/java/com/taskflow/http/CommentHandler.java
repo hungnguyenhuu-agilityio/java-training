@@ -141,8 +141,9 @@ public class CommentHandler implements HttpHandler {
     }
 
     private void handleList(HttpExchange exchange, long taskId) throws IOException {
-        List<Comment> comments = commentService.list(taskId);
-        AuthHandler.sendResponse(exchange, 200, mapper.writeValueAsString(comments));
+        Pagination pagination = Pagination.from(exchange);
+        List<Comment> all = commentService.list(taskId);
+        AuthHandler.sendResponse(exchange, 200, mapper.writeValueAsString(pagination.apply(all)));
     }
 
     // -------------------------------------------------------------------------

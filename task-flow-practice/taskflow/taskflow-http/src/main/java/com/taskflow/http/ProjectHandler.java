@@ -108,9 +108,9 @@ public class ProjectHandler implements HttpHandler {
     }
 
     private void handleList(HttpExchange exchange) throws IOException {
-        List<Project> projects = projectService.getAll();
-        AuthHandler.sendResponse(exchange, 200, mapper.writeValueAsString(
-                projects.stream().map(this::toNode).toList()));
+        Pagination pagination = Pagination.from(exchange);
+        List<ObjectNode> all = projectService.getAll().stream().map(this::toNode).toList();
+        AuthHandler.sendResponse(exchange, 200, mapper.writeValueAsString(pagination.apply(all)));
     }
 
     private void handleGet(HttpExchange exchange, long id) throws IOException {

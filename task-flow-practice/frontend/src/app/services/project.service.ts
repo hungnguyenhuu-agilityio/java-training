@@ -1,7 +1,9 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { Project, ProjectCreateRequest } from '../models/project.model';
+import { PageResponse } from '../models/page-response.model';
 
 @Injectable({ providedIn: 'root' })
 export class ProjectService {
@@ -9,7 +11,9 @@ export class ProjectService {
   private baseUrl = '/api/projects';
 
   getProjects(): Observable<Project[]> {
-    return this.http.get<Project[]>(this.baseUrl);
+    return this.http.get<PageResponse<Project>>(this.baseUrl).pipe(
+      map(r => r.data)
+    );
   }
 
   createProject(data: ProjectCreateRequest): Observable<Project> {

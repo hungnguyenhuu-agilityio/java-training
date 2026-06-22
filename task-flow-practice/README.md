@@ -59,21 +59,40 @@ task-flow-practice/
 
 ## Quick start
 
-### 1. Start MySQL
+### Option A — Docker (recommended)
+
+**Production mode** (pre-built jar, no live reload):
+```bash
+docker compose up --build
+```
+
+**Dev mode** (source mounted, live reload on `.java` / `pom.xml` save):
+```bash
+docker compose -f docker-compose.yml -f docker-compose.dev.yml up --build
+```
+
+Both modes start MySQL on port `3307` and the backend on port `8080`.  
+Schema is applied automatically from `db/migrations/` on first run.
+
+---
+
+### Option B — Local (manual)
+
+#### 1. Start MySQL
 
 ```bash
 docker run --name taskflow-mysql -e MYSQL_ROOT_PASSWORD=root \
   -e MYSQL_DATABASE=taskflow_db -p 3307:3306 -d mysql:8
 ```
 
-### 2. Apply the schema
+#### 2. Apply the schema
 
 ```bash
 mysql -h 127.0.0.1 -P 3307 -u root -proot taskflow_db \
   < db/migrations/V1__init.sql
 ```
 
-### 3. Run the backend
+#### 3. Run the backend
 
 ```bash
 cd taskflow
@@ -82,7 +101,7 @@ mvn exec:java -pl taskflow-http -Dexec.mainClass="com.taskflow.http.Server"
 # Server starts on http://localhost:8080
 ```
 
-### 4. Run the frontend
+#### 4. Run the frontend
 
 ```bash
 cd frontend
@@ -103,23 +122,41 @@ All routes are prefixed with `/api` by the Angular proxy. The backend receives t
 |--------|------|-------------|
 | POST | `/auth/register` | Register a new user |
 | POST | `/auth/login` | Log in, returns `{ token }` |
-| GET | `/tasks` | List tasks (optional `?status=&priority=&projectId=`) |
+| GET | `/tasks` | List / filter tasks — paginated ¹ |
 | POST | `/tasks` | Create task |
 | PUT | `/tasks/{id}` | Update task |
 | DELETE | `/tasks/{id}` | Delete task |
-| GET | `/tasks/export/csv` | Download tasks as CSV |
-| GET | `/tasks/{id}/comments` | List comments on a task |
+| GET | `/tasks/export/csv` | Download all tasks as CSV |
+| GET | `/tasks/{id}/comments` | List comments on a task — paginated ¹ |
 | POST | `/tasks/{id}/comments` | Add a comment |
-| DELETE | `/tasks/{taskId}/comments/{id}` | Delete a comment |
+| DELETE | `/tasks/{taskId}/comments/{id}` | Delete a comment (author only) |
 | GET | `/tasks/{id}/attachments` | List attachments |
-| POST | `/tasks/{id}/attachments` | Upload a file (multipart/form-data) |
-| GET | `/projects` | List projects |
+| POST | `/tasks/{id}/attachments` | Upload a file (multipart/form-data, max 10 MB) |
+| GET | `/projects` | List projects — paginated ¹ |
 | POST | `/projects` | Create project |
-| PUT | `/projects/{id}` | Update project |
-| DELETE | `/projects/{id}` | Delete project (409 if tasks exist) |
+| PUT | `/projects/{id}` | Update project (owner only) |
+| DELETE | `/projects/{id}` | Delete project — 409 if tasks exist |
 | GET | `/dashboard/stats` | Task counts by status and priority |
 
 All endpoints except `/auth/register` and `/auth/login` require `Authorization: Bearer <token>`.
+
+> ¹ **Paginated endpoints** accept `?page=0&size=20` and return:
+> ```json
+> {
+>   "data": [...],
+>   "pagination": {
+>     "page": 0,
+>     "size": 20,
+>     "totalElements": 42,
+>     "totalPages": 3
+>   }
+> }
+> ```
+> `page` is zero-based. `size` defaults to `20`, maximum `100`.
+> Filters (`status`, `priority`, `projectId`) on `/tasks` compose with pagination.
+
+Interactive docs: [`http://localhost:8080/swagger`](http://localhost:8080/swagger)  
+Raw OpenAPI spec: [`http://localhost:8080/openapi.yaml`](http://localhost:8080/openapi.yaml)
 
 ---
 
