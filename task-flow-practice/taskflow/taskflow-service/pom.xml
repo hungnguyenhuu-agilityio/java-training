@@ -22,12 +22,6 @@
             <artifactId>taskflow-domain</artifactId>
         </dependency>
 
-        <!-- Persistence layer -->
-        <dependency>
-            <groupId>com.taskflow</groupId>
-            <artifactId>taskflow-persistence</artifactId>
-        </dependency>
-
         <!-- jBCrypt password hashing -->
         <dependency>
             <groupId>org.mindrot</groupId>

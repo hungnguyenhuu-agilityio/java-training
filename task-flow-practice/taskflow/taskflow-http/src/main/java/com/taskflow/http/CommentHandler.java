@@ -6,7 +6,7 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.taskflow.domain.Comment;
 import com.taskflow.domain.User;
-import com.taskflow.persistence.AttachmentDao;
+import com.taskflow.domain.AttachmentRepository;
 import com.taskflow.service.CommentService;
 
 import java.io.IOException;
@@ -35,7 +35,7 @@ public class CommentHandler implements HttpHandler {
     private final AttachmentHandler attachmentHandler;
     private final ObjectMapper mapper;
 
-    public CommentHandler(CommentService commentService, AttachmentDao attachmentDao,
+    public CommentHandler(CommentService commentService, AttachmentRepository attachmentDao,
                           ObjectMapper mapper) {
         this.commentService = commentService;
         this.attachmentHandler = new AttachmentHandler(attachmentDao, mapper);

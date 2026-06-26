@@ -2,8 +2,8 @@ package com.taskflow.service;
 
 import com.taskflow.domain.Comment;
 import com.taskflow.domain.Task;
-import com.taskflow.persistence.CommentDao;
-import com.taskflow.persistence.TaskDao;
+import com.taskflow.domain.CommentRepository;
+import com.taskflow.domain.TaskRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -22,11 +22,9 @@ class CommentServiceTest {
 
     // ---- Stubs ----
 
-    private static class StubCommentDao extends CommentDao {
+    private static class StubCommentDao implements CommentRepository {
         private final Map<Long, Comment> store = new LinkedHashMap<>();
         private long nextId = 1;
-
-        StubCommentDao() { super(null); }
 
         @Override
         public Comment insert(Comment c) {
@@ -53,17 +51,17 @@ class CommentServiceTest {
         }
     }
 
-    private static class StubTaskDao extends TaskDao {
+    private static class StubTaskDao implements TaskRepository {
         private final Map<Long, Task> store = new LinkedHashMap<>();
-
-        StubTaskDao() { super(null); }
 
         void put(Task t) { store.put(t.getId(), t); }
 
-        @Override
-        public Optional<Task> findById(long id) {
-            return Optional.ofNullable(store.get(id));
-        }
+        @Override public Task insert(Task t) { return t; }
+        @Override public List<Task> findAll() { return List.of(); }
+        @Override public Optional<Task> findById(long id) { return Optional.ofNullable(store.get(id)); }
+        @Override public void update(Task t) {}
+        @Override public void delete(long id) {}
+        @Override public List<Task> findDueSoon(java.time.LocalDate f, java.time.LocalDate t) { return List.of(); }
     }
 
     // ---- Setup ----

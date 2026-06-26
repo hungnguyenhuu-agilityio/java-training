@@ -3,7 +3,7 @@ package com.taskflow.service;
 import com.taskflow.domain.Priority;
 import com.taskflow.domain.Task;
 import com.taskflow.domain.TaskStatus;
-import com.taskflow.persistence.TaskDao;
+import com.taskflow.domain.TaskRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -21,18 +21,19 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class StatsServiceTest {
 
     /** Minimal stub — overrides findAll() to return a fixed list. */
-    private static class StubTaskDao extends TaskDao {
+    private static class StubTaskDao implements TaskRepository {
         private final List<Task> store;
 
         StubTaskDao(List<Task> tasks) {
-            super(null);
             this.store = tasks;
         }
 
-        @Override
-        public List<Task> findAll() {
-            return store;
-        }
+        @Override public Task insert(Task t) { return t; }
+        @Override public List<Task> findAll() { return store; }
+        @Override public java.util.Optional<Task> findById(long id) { return java.util.Optional.empty(); }
+        @Override public void update(Task t) {}
+        @Override public void delete(long id) {}
+        @Override public List<Task> findDueSoon(java.time.LocalDate f, java.time.LocalDate t) { return List.of(); }
     }
 
     private static Task task(TaskStatus status, Priority priority) {

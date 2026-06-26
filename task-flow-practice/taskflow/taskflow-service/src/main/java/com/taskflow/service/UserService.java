@@ -1,7 +1,7 @@
 package com.taskflow.service;
 
 import com.taskflow.domain.User;
-import com.taskflow.persistence.UserDao;
+import com.taskflow.domain.UserRepository;
 import org.mindrot.jbcrypt.BCrypt;
 
 import java.time.Instant;
@@ -15,10 +15,10 @@ import java.util.Optional;
  */
 public class UserService {
 
-    private final UserDao userDao;
+    private final UserRepository userDao;
     private final TokenStore tokenStore;
 
-    public UserService(UserDao userDao, TokenStore tokenStore) {
+    public UserService(UserRepository userDao, TokenStore tokenStore) {
         this.userDao = userDao;
         this.tokenStore = tokenStore;
     }

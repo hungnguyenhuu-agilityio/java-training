@@ -22,6 +22,12 @@
             <artifactId>taskflow-service</artifactId>
         </dependency>
 
+        <!-- Persistence layer (wired here in Server.java — not leaked to service) -->
+        <dependency>
+            <groupId>com.taskflow</groupId>
+            <artifactId>taskflow-persistence</artifactId>
+        </dependency>
+
         <!-- Util layer -->
         <dependency>
             <groupId>com.taskflow</groupId>

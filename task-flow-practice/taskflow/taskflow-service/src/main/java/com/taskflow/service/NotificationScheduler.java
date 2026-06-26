@@ -1,7 +1,7 @@
 package com.taskflow.service;
 
 import com.taskflow.domain.Task;
-import com.taskflow.persistence.TaskDao;
+import com.taskflow.domain.TaskRepository;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -23,7 +23,7 @@ public class NotificationScheduler {
 
     private static final Logger log = Logger.getLogger(NotificationScheduler.class.getName());
 
-    private final TaskDao taskDao;
+    private final TaskRepository taskDao;
     private final long intervalMinutes;
     private final ScheduledExecutorService scheduler =
             Executors.newSingleThreadScheduledExecutor();
@@ -32,7 +32,7 @@ public class NotificationScheduler {
      * @param taskDao         DAO used to query upcoming tasks
      * @param intervalMinutes how often to run the check (minutes)
      */
-    public NotificationScheduler(TaskDao taskDao, long intervalMinutes) {
+    public NotificationScheduler(TaskRepository taskDao, long intervalMinutes) {
         this.taskDao = taskDao;
         this.intervalMinutes = intervalMinutes;
     }

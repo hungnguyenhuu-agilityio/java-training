@@ -1,6 +1,7 @@
 package com.taskflow.persistence;
 
 import com.taskflow.domain.Attachment;
+import com.taskflow.domain.AttachmentRepository;
 
 import java.sql.*;
 import java.time.Instant;
@@ -12,7 +13,7 @@ import java.util.List;
  *
  * <p>All SQL uses {@link PreparedStatement} — no string concatenation (NFR-006).
  */
-public class AttachmentDao {
+public class AttachmentDao implements AttachmentRepository {
 
     private final DbConnection db;
 

@@ -3,7 +3,7 @@ package com.taskflow.service;
 import com.taskflow.domain.Priority;
 import com.taskflow.domain.Task;
 import com.taskflow.domain.TaskStatus;
-import com.taskflow.persistence.TaskDao;
+import com.taskflow.domain.TaskRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -23,13 +23,9 @@ import static org.junit.jupiter.api.Assertions.*;
 class TaskServiceTest {
 
     /** Minimal stub backed by a simple list. */
-    private static class StubTaskDao extends TaskDao {
+    private static class StubTaskDao implements TaskRepository {
         private final java.util.List<Task> store = new java.util.ArrayList<>();
         private long nextId = 1;
-
-        StubTaskDao() {
-            super(null);
-        }
 
         @Override
         public Task insert(Task task) {
@@ -57,6 +53,11 @@ class TaskServiceTest {
         @Override
         public void delete(long id) {
             store.removeIf(t -> t.getId() == id);
+        }
+
+        @Override
+        public List<Task> findDueSoon(java.time.LocalDate from, java.time.LocalDate to) {
+            return List.of();
         }
     }
 
