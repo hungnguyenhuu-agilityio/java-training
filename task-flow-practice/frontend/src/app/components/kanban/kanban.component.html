@@ -1,0 +1,31 @@
+<div class="kanban">
+  <h1 class="kanban__heading">Kanban Board</h1>
+
+  @if (loading()) {
+    <p class="kanban__loading" aria-live="polite">Loading tasks…</p>
+  }
+
+  @if (errorMessage()) {
+    <p class="kanban__error" role="alert">{{ errorMessage() }}</p>
+  }
+
+  @if (!loading()) {
+    <div class="kanban__board">
+      <app-kanban-column
+        title="TODO"
+        [tasks]="todoTasks()"
+        (statusChanged)="onStatusChanged($event)"
+      />
+      <app-kanban-column
+        title="IN PROGRESS"
+        [tasks]="inProgressTasks()"
+        (statusChanged)="onStatusChanged($event)"
+      />
+      <app-kanban-column
+        title="DONE"
+        [tasks]="doneTasks()"
+        (statusChanged)="onStatusChanged($event)"
+      />
+    </div>
+  }
+</div>

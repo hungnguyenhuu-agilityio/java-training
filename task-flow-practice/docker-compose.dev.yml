@@ -1,0 +1,29 @@
+# Dev override — use with:
+#   docker compose -f docker-compose.yml -f docker-compose.dev.yml up --build
+#
+# Replaces the production `app` service with a live-reload variant:
+#   - builds with Dockerfile.dev (Maven + inotify-tools)
+#   - mounts ./taskflow source so edits are visible inside the container immediately
+#   - watch.sh rebuilds and restarts the jar on any .java / pom.xml change
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: taskflow-app-dev
+    volumes:
+      - ./taskflow:/app          # live source mount
+      - maven-repo:/root/.m2     # persist Maven cache across restarts
+    environment:
+      DB_URL: jdbc:mysql://db:3306/taskflow_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      DB_USERNAME: taskflow
+      DB_PASSWORD: taskflow
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+
+volumes:
+  maven-repo:

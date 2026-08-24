@@ -1,0 +1,58 @@
+<div class="dashboard">
+  <main>
+    @if (loading()) {
+      <p class="status-msg">Loading stats...</p>
+    } @else if (error()) {
+      <p class="status-msg error">{{ error() }}</p>
+    } @else {
+      <div class="summary-card">
+        <span class="summary-label">Total Tasks</span>
+        <span class="summary-count">{{ totalTasks() }}</span>
+      </div>
+
+      <section class="chart-section">
+        <h2>By Status</h2>
+        <div class="chart-bars">
+          @for (key of statusKeys; track key) {
+            <div class="bar-row">
+              <span class="bar-label">{{ key }}</span>
+              <div class="bar-track">
+                <div
+                  class="bar-fill status"
+                  [style.width.%]="getPercent(stats()?.byStatus?.[key] ?? 0, maxStatusCount())"
+                  [attr.aria-valuenow]="stats()?.byStatus?.[key] ?? 0"
+                  [attr.aria-valuemax]="maxStatusCount()"
+                  role="progressbar"
+                  [attr.aria-label]="key + ' count'"
+                ></div>
+              </div>
+              <span class="bar-count">{{ stats()?.byStatus?.[key] ?? 0 }}</span>
+            </div>
+          }
+        </div>
+      </section>
+
+      <section class="chart-section">
+        <h2>By Priority</h2>
+        <div class="chart-bars">
+          @for (key of priorityKeys; track key) {
+            <div class="bar-row">
+              <span class="bar-label">{{ key }}</span>
+              <div class="bar-track">
+                <div
+                  class="bar-fill priority"
+                  [style.width.%]="getPercent(stats()?.byPriority?.[key] ?? 0, maxPriorityCount())"
+                  [attr.aria-valuenow]="stats()?.byPriority?.[key] ?? 0"
+                  [attr.aria-valuemax]="maxPriorityCount()"
+                  role="progressbar"
+                  [attr.aria-label]="key + ' count'"
+                ></div>
+              </div>
+              <span class="bar-count">{{ stats()?.byPriority?.[key] ?? 0 }}</span>
+            </div>
+          }
+        </div>
+      </section>
+    }
+  </main>
+</div>

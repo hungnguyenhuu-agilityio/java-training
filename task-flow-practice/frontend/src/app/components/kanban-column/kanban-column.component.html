@@ -1,0 +1,12 @@
+<section class="kanban-column" [attr.aria-label]="title + ' column'">
+  <h2 class="kanban-column__title">{{ title }}</h2>
+  @if (tasks.length === 0) {
+    <p class="kanban-column__empty">No tasks</p>
+  }
+  @for (task of tasks; track task.id) {
+    <app-task-card
+      [task]="task"
+      (statusChanged)="onCardStatusChanged($event)"
+    />
+  }
+</section>

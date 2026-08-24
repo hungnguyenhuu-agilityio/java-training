@@ -1,0 +1,30 @@
+<div class="filter-bar" role="search" aria-label="Filter tasks">
+  <select [(ngModel)]="status" (ngModelChange)="onDropdownChange()" aria-label="Filter by status">
+    <option value="">All statuses</option>
+    <option value="TODO">TODO</option>
+    <option value="IN_PROGRESS">IN_PROGRESS</option>
+    <option value="DONE">DONE</option>
+  </select>
+
+  <select [(ngModel)]="priority" (ngModelChange)="onDropdownChange()" aria-label="Filter by priority">
+    <option value="">All priorities</option>
+    <option value="LOW">LOW</option>
+    <option value="MEDIUM">MEDIUM</option>
+    <option value="HIGH">HIGH</option>
+  </select>
+
+  <select [(ngModel)]="projectId" (ngModelChange)="onDropdownChange()" aria-label="Filter by project">
+    <option value="">All projects</option>
+    <option *ngFor="let p of projects()" [value]="p.id">{{ p.name }}</option>
+  </select>
+
+  <input
+    type="search"
+    [(ngModel)]="searchTerm"
+    (ngModelChange)="onSearchChange()"
+    placeholder="Search by title..."
+    aria-label="Search tasks by title"
+  />
+
+  <button type="button" (click)="clearFilters()">Clear</button>
+</div>

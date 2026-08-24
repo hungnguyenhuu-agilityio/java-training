@@ -1,0 +1,25 @@
+# Dev-only image — live reload via inotify-tools + watch.sh
+# Source is mounted at /app at runtime; this image only pre-warms the Maven cache.
+FROM maven:3.9.6-eclipse-temurin-21
+
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends inotify-tools \
+ && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+# Pre-download dependencies using the pom files only (cache layer)
+COPY taskflow/pom.xml ./pom.xml
+COPY taskflow/taskflow-domain/pom.xml    ./taskflow-domain/pom.xml
+COPY taskflow/taskflow-persistence/pom.xml ./taskflow-persistence/pom.xml
+COPY taskflow/taskflow-service/pom.xml   ./taskflow-service/pom.xml
+COPY taskflow/taskflow-util/pom.xml      ./taskflow-util/pom.xml
+COPY taskflow/taskflow-http/pom.xml      ./taskflow-http/pom.xml
+RUN mvn dependency:go-offline -q || true
+
+COPY watch.sh /usr/local/bin/watch.sh
+RUN chmod +x /usr/local/bin/watch.sh
+
+EXPOSE 8080
+
+ENTRYPOINT ["/usr/local/bin/watch.sh"]

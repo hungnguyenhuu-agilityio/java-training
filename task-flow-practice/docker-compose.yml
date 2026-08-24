@@ -1,0 +1,47 @@
+networks:
+  taskflow-net:
+    driver: bridge
+
+services:
+  db:
+    image: mysql:8.3
+    container_name: taskflow-db
+    networks:
+      - taskflow-net
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: taskflow_db
+      MYSQL_USER: taskflow
+      MYSQL_PASSWORD: taskflow
+    ports:
+      - "3307:3306"
+    volumes:
+      - taskflow-db-data:/var/lib/mysql
+      - ./db/migrations:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-utaskflow", "-ptaskflow"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: taskflow-app
+    networks:
+      - taskflow-net
+    environment:
+      # Override DB host/port inside the container network
+      DB_URL: jdbc:mysql://db:3306/taskflow_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      DB_USERNAME: taskflow
+      DB_PASSWORD: taskflow
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+
+volumes:
+  taskflow-db-data:
+  maven-repo:
