@@ -17,7 +17,7 @@ Implement registration, login, authorization, refresh rotation, silent renewal, 
 
 **Restated intent**: Users authenticate without browser-stored tokens; backend authorization, ownership, CSRF protection, rotation, and family revocation remain authoritative.  
 **Out of scope**: Social login, MFA, password reset, and warehouse-specific roles.  
-**Requirement Refs**: US-003, FR-003, FR-010, FR-011, NFR-001, NFR-002, NFR-002A.
+**Requirement Refs**: US-003, FR-003, FR-010, FR-011, FR-012, NFR-001, NFR-002, NFR-002A.
 
 ### Requirement Fidelity Gate
 
@@ -38,6 +38,7 @@ Implement registration, login, authorization, refresh rotation, silent renewal, 
 | 2 | Refresh rotates hashed tokens; reuse revokes the family; concurrent refresh has one defined safe result. | NFR-002A |
 | 3 | Reload silently refreshes, one expired request retries once, and failure/logout clears authentication state. | FR-003, FR-011 |
 | 4 | Backend roles, ownership, CSRF, and safe Problem Details are enforced independently of the UI. | NFR-001, FR-010 |
+| 5 | Generated OpenAPI accurately describes registration, login, refresh, and logout contracts, including bearer authorization, refresh-cookie/CSRF requirements, and safe Problem Details without secret-bearing examples. | FR-012, FR-010, NFR-002 |
 
 ## Evaluation & Acceptance
 
@@ -92,7 +93,7 @@ Catalog/inventory/order business rules and deployment credentials.
 
 ## Test Plan
 
-Domain, persistence, MVC/security, CSRF/replay/concurrency, Angular state/guard/interceptor, and critical browser-flow tests.
+Domain, persistence, MVC/security, generated OpenAPI structural assertions, CSRF/replay/concurrency, Angular state/guard/interceptor, and critical browser-flow tests.
 
 ## Completion Checklist
 

@@ -17,7 +17,7 @@ Complete checkout through a provider-neutral port and Stripe-hosted session, usi
 
 **Restated intent**: Local order/payment/reservation state remains recoverable across provider timeouts, retries, duplicate/out-of-order webhooks, browser returns, cancellation, and expiry.  
 **Out of scope**: Inline card collection, multiple providers, notification delivery, partial capture/refund, and fulfillment administration.  
-**Requirement Refs**: US-005A, FR-006A, FR-006B, FR-010, FR-011, NFR-006A, NFR-006B, NFR-006C.
+**Requirement Refs**: US-005A, FR-006A, FR-006B, FR-010, FR-011, FR-012, NFR-006A, NFR-006B, NFR-006C.
 
 ### Requirement Fidelity Gate
 
@@ -39,6 +39,7 @@ Complete checkout through a provider-neutral port and Stripe-hosted session, usi
 | 3 | Raw-body signatures, replay protection, durable deduplication, and out-of-order handling guard webhooks. | NFR-006B |
 | 4 | Only a verified successful webhook commits reservation and confirms order; browser return only informs UX. | FR-006A |
 | 5 | Angular checkout submits once, redirects, and displays pending/confirmed/cancelled/error states safely. | FR-011 |
+| 6 | Generated OpenAPI describes the customer checkout-session contract and separates or hides the provider webhook from public interactive documentation while preserving its authenticated integration contract. | FR-012, NFR-006B |
 
 ## Evaluation & Acceptance
 
@@ -93,7 +94,7 @@ Stripe secrets in source, catalog administration, notification delivery, and dep
 
 ## Test Plan
 
-Gateway contract, signed webhook fixtures, real-DB state transitions, fault injection, Angular submission/return, and browser sandbox smoke tests.
+Gateway contract, signed webhook fixtures, real-DB state transitions, generated OpenAPI structural assertions, fault injection, Angular submission/return, and browser sandbox smoke tests.
 
 ## Completion Checklist
 

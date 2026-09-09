@@ -15,11 +15,11 @@ Read `PROJECT_SPEC.md`, `memory/MEMORY.md`, this guide, `agents/common-infrastru
 
 Establish the reproducible runtime and architectural foundation required by every later vertical slice.
 
-**Restated intent**: A developer or CI runner can build, test, and start the Spring Boot, Angular, and MySQL stack, with Liquibase and executable modular-boundary checks.
+**Restated intent**: A developer or CI runner can build, test, and start the Spring Boot, Angular, and MySQL stack, with Liquibase, executable modular-boundary checks, and the foundation for generated OpenAPI documentation.
 
 **Out of scope**: Business features, production deployment, secrets, and broad shared abstractions.
 
-**Requirement Refs**: NFR-004, NFR-005, NFR-009, NFR-012.
+**Requirement Refs**: FR-012, NFR-004, NFR-005, NFR-009, NFR-012.
 
 ### Requirement Fidelity Gate
 
@@ -41,6 +41,7 @@ Establish the reproducible runtime and architectural foundation required by ever
 | 2 | Liquibase exclusively creates the baseline schema; ORM mutation is disabled. | NFR-004 |
 | 3 | Automated architecture tests reject cycles and outward domain/application dependencies. | NFR-005 |
 | 4 | Backend and frontend build and test independently in CI-friendly mode. | NFR-012 |
+| 5 | A pinned Springdoc WebMVC dependency generates a valid OpenAPI document in test/local profiles; interactive documentation is disabled or access-controlled outside approved profiles. | FR-012 |
 
 ## Evaluation & Acceptance
 
@@ -48,6 +49,7 @@ Establish the reproducible runtime and architectural foundation required by ever
 |---|---|---|
 | Clean checkout with prerequisites | Builds and starts the complete local stack | Docker smoke test |
 | Illegal module dependency fixture | Architecture test fails | Automated test |
+| Booted backend in the test profile | OpenAPI JSON loads with project metadata and no actuator operations | MVC integration test |
 
 ```bash
 docker compose config && (cd backend && ./mvnw test) && (cd frontend && npm test -- --watch=false && npm run build)
@@ -75,18 +77,20 @@ To be filled by the independent reviewer in `tasks/TASK_REVIEW_T001.md` at Stage
 ## Approach
 
 **Pattern reference**: `docs/ddr/0001-package-enforced-modular-monolith.md`.  
-**Vital slice**: Bootable stack plus one architecture-boundary test.  
-**Cut list**: No feature modules beyond empty boundary roots; no deployment automation.
+**Vital slice**: Bootable stack, one architecture-boundary test, and generated OpenAPI infrastructure ready for the first business endpoint.
+**Cut list**: No feature modules beyond empty boundary roots; no exhaustive schema annotations, generated clients, contract-first code generation, or deployment automation.
 
 ## Edge Case Checklist
 
 - [ ] MySQL is not ready when the backend starts.
 - [ ] Liquibase and Hibernate disagree about schema ownership.
 - [ ] Docker and host-mode configuration diverge.
+- [ ] Swagger/OpenAPI or actuator endpoints are unintentionally public in a production-like profile.
+- [ ] A Springdoc upgrade changes the generated schema without a failing test.
 
 ## Files to Change (Predicted)
 
-`docker-compose.yml`, backend build/config/changelog/module packages/tests, frontend environment/proxy shell, and CI-neutral verification configuration.
+`docker-compose.yml`, backend build/config/changelog/module packages/tests, Springdoc metadata/profile configuration, frontend environment/proxy shell, and CI-neutral verification configuration.
 
 ## Files Must NOT Touch
 
@@ -94,7 +98,7 @@ To be filled by the independent reviewer in `tasks/TASK_REVIEW_T001.md` at Stage
 
 ## Test Plan
 
-Run backend context, architecture, Liquibase, frontend unit/build, Compose configuration, and startup smoke checks.
+Run backend context, architecture, Liquibase, OpenAPI MVC integration, frontend unit/build, Compose configuration, and startup smoke checks.
 
 ## Completion Checklist
 

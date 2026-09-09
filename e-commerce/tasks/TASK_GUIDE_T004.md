@@ -17,7 +17,7 @@ Give administrators controlled category/product maintenance without bypassing ca
 
 **Restated intent**: Authorized administrators can create, edit, deactivate, and reactivate catalog records while referenced history remains safe.  
 **Out of scope**: Stock quantities, warehouse operations, hard deletion, bulk import, and media hosting.  
-**Requirement Refs**: US-007, FR-008, FR-010, FR-011, NFR-001.
+**Requirement Refs**: US-007, FR-008, FR-010, FR-011, FR-012, NFR-001.
 
 ### Requirement Fidelity Gate
 
@@ -37,6 +37,7 @@ Give administrators controlled category/product maintenance without bypassing ca
 | 1 | ADMIN can create/edit valid categories and products; CUSTOMER and anonymous callers cannot. | FR-008, NFR-001 |
 | 2 | Deactivation hides public products while preserving referenced history; active categories with active products cannot deactivate. | FR-008 |
 | 3 | Angular admin routes expose permitted actions and safe validation/error states. | FR-011, FR-010 |
+| 4 | Generated OpenAPI describes administrator catalog operations, schemas, bearer authorization, validation constraints, and Problem Details. | FR-012, FR-010, NFR-001 |
 
 ## Evaluation & Acceptance
 
@@ -90,7 +91,7 @@ Inventory quantity, ordering/payment, authentication internals, and deployment.
 
 ## Test Plan
 
-Aggregate, authorization, persistence concurrency, MVC Problem Details, Angular forms/guards, and browser tests.
+Aggregate, authorization, persistence concurrency, MVC Problem Details, generated OpenAPI structural assertions, Angular forms/guards, and browser tests.
 
 ## Completion Checklist
 

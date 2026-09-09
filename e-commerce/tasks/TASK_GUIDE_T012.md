@@ -17,7 +17,7 @@ Deliver protected administrator order review, legal fulfillment transitions, and
 
 **Restated intent**: ADMIN can advance valid states and request idempotent refunds, but cancellation and stock restoration occur only after verified refund confirmation.  
 **Out of scope**: Returns, partial refunds, disputes, post-shipment cancellation, and customer cancellation.  
-**Requirement Refs**: US-008, FR-009, FR-010, FR-011, NFR-001, NFR-006B, NFR-006C.
+**Requirement Refs**: US-008, FR-009, FR-010, FR-011, FR-012, NFR-001, NFR-006B, NFR-006C.
 
 ### Requirement Fidelity Gate
 
@@ -38,6 +38,7 @@ Deliver protected administrator order review, legal fulfillment transitions, and
 | 2 | Pending cancellation releases reservation atomically; paid confirmed cancellation starts idempotent refund without holding a DB transaction over network. | FR-009, NFR-006C |
 | 3 | Only verified refund confirmation marks `CANCELLED` and restores stock once. | FR-009, NFR-006B |
 | 4 | Angular admin UI exposes only currently valid actions and pending/failure states. | FR-011 |
+| 5 | Generated OpenAPI describes administrator order queries/transitions/refund initiation, allowed inputs, bearer authorization, and Problem Details while keeping provider callback details out of public interactive documentation. | FR-012, FR-010, NFR-001 |
 
 ## Evaluation & Acceptance
 
@@ -92,7 +93,7 @@ Customer order mutation, returns, partial refunds, or catalog rules.
 
 ## Test Plan
 
-State-machine, authorization, provider fault, webhook replay/order, stock idempotency, Angular action visibility, and browser tests.
+State-machine, authorization, provider fault, webhook replay/order, stock idempotency, generated OpenAPI structural assertions, Angular action visibility, and browser tests.
 
 ## Completion Checklist
 

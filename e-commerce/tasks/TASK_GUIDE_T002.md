@@ -37,7 +37,7 @@ Deliver public product discovery from persisted catalog records through API and 
 | 1 | Public list supports bounded pagination, text search, approved sorting, and category filtering over active products. | FR-001 |
 | 2 | Public detail returns an active product and hides inactive or unknown products using safe Problem Details. | FR-002, FR-010 |
 | 3 | Angular catalog and detail routes expose loading, empty, validation, and failure states. | FR-011 |
-| 4 | OpenAPI documents implemented endpoints and the reference dataset meets catalog latency targets. | FR-012, NFR-013 |
+| 4 | The generated OpenAPI contract accurately describes catalog list/detail operations, bounded query parameters, success schemas, and RFC 7807 failure responses; the reference dataset meets catalog latency targets. | FR-012, FR-010, NFR-013 |
 
 ## Evaluation & Acceptance
 
@@ -45,6 +45,7 @@ Deliver public product discovery from persisted catalog records through API and 
 |---|---|---|
 | Mixed active/inactive catalog | Only matching active records appear in stable order | Backend integration + UI test |
 | Invalid page/sort or inactive ID | Actionable safe failure or not-found result | Negative tests |
+| Generated OpenAPI document | Catalog paths, parameters, schemas, public access, and Problem Details match the implemented contract | OpenAPI contract test |
 
 ```bash
 (cd backend && ./mvnw test -Dtest='*Catalog*Test,*Catalog*IT') && (cd frontend && npm test -- --watch=false --include='src/app/features/catalog/**/*.spec.ts' && npm run build)
@@ -73,13 +74,16 @@ To be filled by the independent reviewer in `tasks/TASK_REVIEW_T002.md` at Stage
 
 **Pattern reference**: `frontend/README.md` feature layout and DDR-0001 module boundary.  
 **Vital slice**: Paginated list plus detail.  
-**Cut list**: No inventory counts, autocomplete, facets, or external search service.
+**Cut list**: No inventory counts, autocomplete, facets, external search service, generated Angular client, or annotations that merely repeat inferable Java/validation metadata.
 
 ## Edge Case Checklist
 
 - [ ] Search normalization and MySQL collation differ.
 - [ ] Page becomes empty after filtering.
 - [ ] Product deactivates between list and detail.
+- [ ] Pagination or generic response wrappers produce incomplete or misleading OpenAPI schemas.
+- [ ] Public catalog operations accidentally inherit a bearer-auth requirement.
+- [ ] Controller advice generates runtime Problem Details that disagree with the documented error schema.
 
 ## Files to Change (Predicted)
 
@@ -91,7 +95,7 @@ Inventory, ordering, payment, identity, and deployment workflows.
 
 ## Test Plan
 
-Domain, repository, MVC/OpenAPI, performance-fixture, Angular component/service, and responsive browser tests.
+Domain, repository, MVC, generated OpenAPI contract, performance-fixture, Angular component/service, and responsive browser tests. Prefer structural assertions on important paths, parameters, security, and schemas over snapshotting the entire generated document.
 
 ## Completion Checklist
 

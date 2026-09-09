@@ -17,7 +17,7 @@ Create the independent delivery gate proving the approved application builds, te
 
 **Restated intent**: One CI-friendly workflow verifies all task acceptance suites, coverage/mutation thresholds, Compose runtime, secured operations, deployed Browse→Cart→Checkout→Orders behavior, and rollback readiness.  
 **Out of scope**: Implementing missing feature behavior, automatic production release, daily reports, and deferred email delivery.  
-**Requirement Refs**: US-010, US-011, FR-013, NFR-007, NFR-009, NFR-010, NFR-011, NFR-012, NFR-013, NFR-014.
+**Requirement Refs**: US-010, US-011, FR-012, FR-013, NFR-007, NFR-009, NFR-010, NFR-011, NFR-012, NFR-013, NFR-014.
 
 ### Requirement Fidelity Gate
 
@@ -39,6 +39,7 @@ Create the independent delivery gate proving the approved application builds, te
 | 3 | Reference dataset performance targets pass with no oversell, duplicates, or >1% server errors. | NFR-013 |
 | 4 | GitHub Actions supports controlled Railway/Vercel deployment with protected secrets and explicit rollback procedure. | NFR-010, NFR-011 |
 | 5 | Deployed smoke checks verify frontend/backend integration and secured health/metrics without leaking sensitive data. | US-011, FR-013 |
+| 6 | CI generates and structurally validates the complete OpenAPI contract for implemented business endpoints without exposing actuator operations or requiring the interactive UI in production. | US-010, FR-012 |
 
 ## Evaluation & Acceptance
 
@@ -46,6 +47,7 @@ Create the independent delivery gate proving the approved application builds, te
 |---|---|---|
 | Clean CI/local environment | All suites and evidence thresholds pass from one command | Independent gate run |
 | Deployment or smoke failure | Pipeline stops and rollback procedure restores last known good version | Rollback exercise |
+| Complete backend implementation | Generated OpenAPI paths, schemas, security declarations, and Problem Details pass independent structural validation | CI OpenAPI contract check |
 
 ```bash
 ./scripts/verify-build.sh
@@ -83,10 +85,12 @@ To be filled by the independent reviewer in `tasks/TASK_REVIEW_T015.md` at Stage
 - [ ] deployment health passes but proxy/cookie/webhook route fails.
 - [ ] rollback omits database compatibility.
 - [ ] secrets or PII appear in artifacts/logs/metrics.
+- [ ] Generated OpenAPI omits an implemented business endpoint or includes actuator/internal endpoints.
+- [ ] CI succeeds only because a stale generated specification was committed or cached.
 
 ## Files to Change (Predicted)
 
-Independent smoke/browser/performance/security suites, `scripts/verify-build.sh`, Docker/CI/deployment configuration, rollback/runbook documentation, and review evidence files.
+Independent smoke/browser/performance/security/OpenAPI suites, `scripts/verify-build.sh`, Docker/CI/deployment configuration, rollback/runbook documentation, and review evidence files.
 
 ## Files Must NOT Touch
 
@@ -94,7 +98,7 @@ Feature production code except separately triaged fixes returned to owning tasks
 
 ## Test Plan
 
-Clean-environment build, all targeted/full suites, coverage/mutation, Compose, browser viewports, reference-load, security exposure, preview deployment, and rollback exercise.
+Clean-environment build, all targeted/full suites, coverage/mutation, generated OpenAPI structural validation, Compose, browser viewports, reference-load, security exposure, preview deployment, and rollback exercise.
 
 ## Completion Checklist
 

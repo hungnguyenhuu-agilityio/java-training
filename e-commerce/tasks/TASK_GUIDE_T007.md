@@ -17,7 +17,7 @@ Turn an authenticated cart into one idempotent order and expiring reservation at
 
 **Restated intent**: Checkout atomically snapshots the cart and selects the eligible warehouse maximizing the lowest post-reservation stock, ties by ascending warehouse code, without split fulfillment or overselling.  
 **Out of scope**: Stripe calls, payment confirmation, customer warehouse choice, and multi-warehouse orders.  
-**Requirement Refs**: US-005, US-005B, FR-005, FR-005B, FR-006, FR-010, NFR-003, NFR-006C.
+**Requirement Refs**: US-005, US-005B, FR-005, FR-005B, FR-006, FR-010, FR-012, NFR-003, NFR-006C.
 
 ### Requirement Fidelity Gate
 
@@ -38,6 +38,7 @@ Turn an authenticated cart into one idempotent order and expiring reservation at
 | 2 | Order/item/shipping/warehouse snapshots and reservation lines commit atomically with stock holds. | FR-005, NFR-003 |
 | 3 | Same actor/key/fingerprint returns the same result; key reuse with different payload is rejected. | FR-006 |
 | 4 | No eligible warehouse rejects with typed out-of-stock and no partial state; expiry/cancel releases once. | FR-005, FR-010 |
+| 5 | Generated OpenAPI describes checkout reservation input, idempotency requirements, success/out-of-stock schemas, authorization, and Problem Details without exposing warehouse-selection internals. | FR-012, FR-010 |
 
 ## Evaluation & Acceptance
 
@@ -84,7 +85,7 @@ Frontend warehouse selection, Stripe adapter, notifications, and WMS scope.
 
 ## Test Plan
 
-Pure policy tests plus MySQL transaction/isolation/idempotency/expiry integration tests; do not rely on H2 for locking evidence.
+Pure policy tests plus MySQL transaction/isolation/idempotency/expiry integration tests and generated OpenAPI structural assertions; do not rely on H2 for locking evidence.
 
 ## Completion Checklist
 

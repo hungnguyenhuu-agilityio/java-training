@@ -17,7 +17,7 @@ Expose authenticated customers' immutable order snapshots and status histories w
 
 **Restated intent**: A customer can list and inspect only their orders, including payment/fulfillment state and selected-warehouse reference needed for history, through safe API and Angular routes.  
 **Out of scope**: Administrator transitions, cancellation/refund commands, editing snapshots, and warehouse selection.  
-**Requirement Refs**: US-006, FR-007, FR-010, FR-011, NFR-001.
+**Requirement Refs**: US-006, FR-007, FR-010, FR-011, FR-012, NFR-001.
 
 ### Requirement Fidelity Gate
 
@@ -38,6 +38,7 @@ Expose authenticated customers' immutable order snapshots and status histories w
 | 2 | Detail includes immutable item/price/shipping snapshots and ordered status history without internal/sensitive data. | FR-007 |
 | 3 | Another customer's order is not distinguishable from an unknown inaccessible order. | NFR-001, FR-010 |
 | 4 | Angular list/detail/loading/empty/error routes preserve ownership behavior. | FR-011 |
+| 5 | Generated OpenAPI describes paginated order history/detail schemas, bearer authorization, ownership-safe failures, and Problem Details without exposing internal payment or warehouse data. | FR-012, FR-010, NFR-001 |
 
 ## Evaluation & Acceptance
 
@@ -91,7 +92,7 @@ Order transition rules, refund commands, inventory mutation, and payment webhook
 
 ## Test Plan
 
-Ownership/security integration, snapshot mapping, pagination, Angular states, and responsive browser tests.
+Ownership/security integration, snapshot mapping, pagination, generated OpenAPI structural assertions, Angular states, and responsive browser tests.
 
 ## Completion Checklist
 

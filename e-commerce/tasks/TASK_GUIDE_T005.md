@@ -17,7 +17,7 @@ Deliver one authenticated cart per customer through API and Angular UI.
 
 **Restated intent**: A customer can add, update, remove, and clear valid active products while seeing authoritative quantities, unit prices, and totals.  
 **Out of scope**: Guest carts, promotions, inventory holds, checkout, and payment.  
-**Requirement Refs**: US-004, FR-004, FR-010, FR-011, NFR-001.
+**Requirement Refs**: US-004, FR-004, FR-010, FR-011, FR-012, NFR-001.
 
 ### Requirement Fidelity Gate
 
@@ -37,6 +37,7 @@ Deliver one authenticated cart per customer through API and Angular UI.
 | 1 | Authenticated customer can add/update/remove/clear only their cart with positive bounded quantities. | FR-004, NFR-001 |
 | 2 | Cart returns authoritative product/price snapshots for display and handles inactive/missing products safely. | FR-004, FR-010 |
 | 3 | Angular cart shows items/totals and prevents invalid or duplicate UI submissions. | FR-011 |
+| 4 | Generated OpenAPI describes cart operations, quantity constraints, response schemas, bearer authorization, and Problem Details. | FR-012, FR-010, NFR-001 |
 
 ## Evaluation & Acceptance
 
@@ -90,7 +91,7 @@ Warehouse stock, order/payment behavior, and catalog ownership.
 
 ## Test Plan
 
-Cart aggregate, ownership, persistence/MVC, Angular service/component, and browser-flow tests.
+Cart aggregate, ownership, persistence/MVC, generated OpenAPI structural assertions, Angular service/component, and browser-flow tests.
 
 ## Completion Checklist
 

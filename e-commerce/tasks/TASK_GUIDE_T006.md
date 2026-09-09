@@ -17,7 +17,7 @@ Implement warehouse-scoped stock administration without expanding into full ware
 
 **Restated intent**: ADMIN manages warehouse identity, activation, per-product on-hand quantity, and safety threshold while catalog products remain global.  
 **Out of scope**: WAREHOUSE_MANAGER, customer warehouse selection, bins, receiving, picking, packing, procurement, transfers, routing, and order splitting.  
-**Requirement Refs**: US-008A, FR-008A, FR-010, FR-011, NFR-001, NFR-003.
+**Requirement Refs**: US-008A, FR-008A, FR-010, FR-011, FR-012, NFR-001, NFR-003.
 
 ### Requirement Fidelity Gate
 
@@ -38,6 +38,7 @@ Implement warehouse-scoped stock administration without expanding into full ware
 | 2 | Warehouse/product uniqueness and `0 <= reserved <= on-hand` are enforced at domain and database boundaries. | NFR-003 |
 | 3 | Deactivation rejects active reservations or assigned non-terminal orders without partial change. | FR-008A |
 | 4 | Angular admin workflow exposes inventory state without WMS-only operations. | FR-011 |
+| 5 | Generated OpenAPI describes warehouse/inventory administration operations, numeric constraints, bearer authorization, and Problem Details without exposing excluded WMS operations. | FR-012, FR-010, NFR-001 |
 
 ## Evaluation & Acceptance
 
@@ -92,7 +93,7 @@ Catalog product ownership, customer checkout UX, payment, and WMS-only concepts.
 
 ## Test Plan
 
-Domain invariants, migration constraints, authorization/MVC, concurrency, Angular forms, and responsive browser tests.
+Domain invariants, migration constraints, authorization/MVC, generated OpenAPI structural assertions, concurrency, Angular forms, and responsive browser tests.
 
 ## Completion Checklist
 
