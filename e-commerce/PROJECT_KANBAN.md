@@ -6,7 +6,7 @@
 ## Board
 
 ### Todo
-- [ ] **T001** — Modular runtime, database, and main-only CI/CD foundation | Common-Infrastructure-Agent | C3 | Risk: High | P0
+- [ ] **T001** — Modular runtime, database, UI shell, and main-only CI/CD foundation | Common Infrastructure + Frontend | C3 | Risk: High | P0
 - [ ] **T002** — Public product catalog journey | Backend + Frontend | C2 | Risk: Medium | P0
 - [ ] **T003** — Registration, login, and secure session lifecycle | Backend + Frontend | C3 | Risk: High | P0
 - [ ] **T004** — Protected catalog administration | Backend + Frontend | C2 | Risk: High | P0

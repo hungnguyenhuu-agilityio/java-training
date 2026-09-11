@@ -1,5 +1,5 @@
 # TASK_GUIDE — T004: Protected Catalog Administration
-**Date**: 2026-09-08
+**Date**: 2026-09-11
 **Complexity Level**: C2
 **Risk Level**: High
 **Priority**: P0
@@ -51,6 +51,8 @@ Give administrators controlled category/product maintenance without bypassing ca
 ```
 
 ## UI / Design Acceptance Criteria
+
+**UI specification**: [`UI_SPEC.md` §9 — T004 Catalog Administration](../UI_SPEC.md#t004-catalog-administration)
 
 | Evidence | Method | Expected result |
 |---|---|---|

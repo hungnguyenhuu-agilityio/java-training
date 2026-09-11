@@ -55,6 +55,8 @@ Independently harden and certify the T001 delivery pipeline by proving the compl
 
 ## UI / Design Acceptance Criteria
 
+**UI specification**: [`UI_SPEC.md` §15 — T015 Cross-Application UI Evidence](../UI_SPEC.md#t015-ui-evidence)
+
 | Evidence | Method | Expected result |
 |---|---|---|
 | Visual regression | Automated critical-route screenshots/diffs | No unapproved regressions |

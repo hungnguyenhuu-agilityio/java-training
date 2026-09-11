@@ -1,5 +1,5 @@
 # TASK_GUIDE — T006: Warehouse-Scoped Inventory Administration
-**Date**: 2026-09-08
+**Date**: 2026-09-11
 **Complexity Level**: C3
 **Risk Level**: High
 **Priority**: P0
@@ -52,6 +52,8 @@ Implement warehouse-scoped stock administration without expanding into full ware
 ```
 
 ## UI / Design Acceptance Criteria
+
+**UI specification**: [`UI_SPEC.md` §11 — T006 Warehouse and Inventory Administration](../UI_SPEC.md#t006-inventory-administration)
 
 | Evidence | Method | Expected result |
 |---|---|---|

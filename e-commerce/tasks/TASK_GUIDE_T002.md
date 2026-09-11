@@ -1,5 +1,5 @@
 # TASK_GUIDE — T002: Public Product Catalog Journey
-**Date**: 2026-09-08
+**Date**: 2026-09-11
 **Complexity Level**: C2
 **Risk Level**: Medium
 **Priority**: P0
@@ -53,6 +53,8 @@ Deliver public product discovery from persisted catalog records through API and 
 
 ## UI / Design Acceptance Criteria
 
+**UI specification**: [`UI_SPEC.md` §7 — T002 Public Catalog](../UI_SPEC.md#t002-public-catalog)
+
 | Evidence | Method | Expected result |
 |---|---|---|
 | Visual regression | Automated catalog/detail screenshots | Stable approved states |
@@ -72,7 +74,7 @@ To be filled by the independent reviewer in `tasks/TASK_REVIEW_T002.md` at Stage
 
 ## Approach
 
-**Pattern reference**: `frontend/README.md` feature layout and DDR-0001 module boundary.  
+**Pattern reference**: `UI_SPEC.md`, `frontend/README.md` feature layout, and DDR-0001 module boundary.
 **Vital slice**: Paginated list plus detail.  
 **Cut list**: No inventory counts, autocomplete, facets, external search service, generated Angular client, or annotations that merely repeat inferable Java/validation metadata.
 

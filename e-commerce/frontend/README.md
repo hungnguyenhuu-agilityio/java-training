@@ -2,6 +2,8 @@
 
 Angular client for the customer storefront and administrator workflows described in the [project requirements](../README.md).
 
+The approved visual and interaction contract is [`UI_SPEC.md`](../UI_SPEC.md). Frontend work must use its Angular Material foundation, shared shell, route wireframes, state behavior, responsiveness, and accessibility rules rather than inventing task-local designs.
+
 The frontend is independently buildable and uses Angular standalone components. It is expected to communicate with the Spring Boot REST API over HTTP/JSON and send a JWT bearer token for protected operations.
 
 ## Requirement Mapping
@@ -19,7 +21,7 @@ The frontend is independently buildable and uses Angular standalone components. 
 | API errors | Interpret RFC 7807 Problem Details, including field violations | Users receive useful messages for validation, authentication, authorization, not-found, and conflict responses |
 | Quality | Unit-test components, services, guards, interceptors, and critical user flows | Frontend tests run through a CI-friendly npm command |
 
-Payment processing, promotions, reviews, wishlists, and other features not named in the project requirements are outside the frontend scope.
+Custom payment forms (payment uses Stripe-hosted Checkout), promotions, reviews, wishlists, and other features not named in the project requirements are outside the frontend scope.
 
 ## Planned Routes
 
@@ -29,12 +31,15 @@ Payment processing, promotions, reviews, wishlists, and other features not named
 | `/products/:id` | Public | View product details |
 | `/register` | Guest | Create a customer account |
 | `/login` | Guest | Authenticate and begin a session |
-| `/cart` | `CUSTOMER` or `ADMIN` | Manage the active cart |
-| `/checkout` | `CUSTOMER` or `ADMIN` | Validate checkout details and place an order |
-| `/orders` | `CUSTOMER` or `ADMIN` | View the current user's order history |
-| `/orders/:id` | `CUSTOMER` or `ADMIN` | View an accessible order |
+| `/cart` | `CUSTOMER` | Manage the active cart |
+| `/checkout` | `CUSTOMER` | Validate checkout details and place an order |
+| `/checkout/result` | `CUSTOMER` | Show backend-verified payment/order progress after the Stripe return |
+| `/orders` | `CUSTOMER` | View the current user's order history |
+| `/orders/:id` | `CUSTOMER` | View an accessible order |
 | `/admin/products` | `ADMIN` | Manage products |
 | `/admin/categories` | `ADMIN` | Manage categories |
+| `/admin/warehouses` | `ADMIN` | Manage warehouses |
+| `/admin/inventory` | `ADMIN` | Maintain warehouse-scoped inventory and thresholds |
 | `/admin/orders` | `ADMIN` | Review orders and manage their status |
 
 The route names are the intended frontend contract and may be refined when the corresponding feature is implemented. Authorization must also be enforced by the backend; route guards and hidden controls are usability measures, not security boundaries.
@@ -62,7 +67,7 @@ Prefer lazy-loaded feature routes, typed API models, reactive forms, and central
 
 ## Current Status
 
-The Angular 22.1 scaffold is initialized with routing and Vitest support. Feature routes, API integration, authentication, and application screens are not implemented yet; the tables above define the frontend delivery target rather than the current feature set.
+The Angular 22.1 scaffold is initialized with routing and Vitest support. Feature routes, API integration, authentication, Angular Material, and application screens are not implemented yet; the tables above and `UI_SPEC.md` define the delivery target rather than the current feature set.
 
 ## Prerequisites
 
