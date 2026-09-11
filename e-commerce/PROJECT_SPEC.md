@@ -1,6 +1,6 @@
 # PROJECT_SPEC.md
-**Last updated**: 2026-09-08
-**Version**: 1.1
+**Last updated**: 2026-09-11
+**Version**: 1.2
 
 > **Scope of this document**: How to build the product safely. Product intent, personas, user stories, functional requirements, non-functional requirements, and success metrics live in `PRD.md`.
 
@@ -98,6 +98,8 @@ The exact table layout must pass the migration-safety gate before implementation
 - Concurrency correctness must be proven against the real database behavior; virtual threads do not replace locking, isolation, bounded concurrency, or backpressure.
 - No production endpoint may create arbitrary simulated traffic. Any manual scan adapter must be profile-gated outside production and authorized.
 - The full-stack local and CI workflow must remain reproducible with Docker Compose.
+- GitHub Actions runs CI for pull requests and pushes, but deployment is reachable only from a successful protected-`main` merge. That single release path deploys the Railway backend and Vercel frontend, then runs post-deployment smoke checks; feature branches and pull requests never deploy.
+- Production deployment jobs must consume protected GitHub environment secrets, serialize releases, report partial Railway/Vercel failure as a failed release, and retain an actionable rollback path compatible with applied Liquibase migrations.
 - Implementation cannot start without an approved `TASK_GUIDE_Txxx.md` and test-first acceptance criteria.
 
 ---
@@ -153,10 +155,10 @@ Stage 2 decomposes the approved product into 15 dependency-ordered tracer-bullet
 
 | Range | Milestone | Outcome |
 |---|---|---|
-| T001–T005 | Foundation and customer preparation | Runnable modular stack, public catalog, secure identity, catalog administration, and cart |
+| T001–T005 | Foundation and customer preparation | Runnable modular stack, main-only CI/CD foundation, public catalog, secure identity, catalog administration, and cart |
 | T006–T010 | Warehouse-safe paid checkout | Warehouse inventory, allocation/reservation, Stripe confirmation, concurrency proof, and notification request |
 | T011–T014 | Order operations and observability | Owned order history, administrator fulfillment/refunds, low-stock alerts, and secured metrics |
-| T015 | Delivery gate | Independent full-stack, CI, deployment, rollback, and evidence verification |
+| T015 | Delivery gate | Independent full-stack CI/CD hardening, rollback exercise, and release evidence verification |
 
 ---
 
@@ -171,3 +173,4 @@ Stage 2 decomposes the approved product into 15 dependency-ordered tracer-bullet
 | 2026-09-08 | Low-stock alert suppression is state-based rather than time-based; the user delegated this choice to the Supervisor's recommended standard due to limited domain experience. | Requirement grilling |
 | 2026-09-08 | Stage 2 produced 15 dependency-ordered task guides: 13 AFK and 2 HITL; warehouse/concurrency work is integrated after its real catalog, identity, cart, and payment prerequisites. | Stage 2 planning |
 | 2026-09-08 | The Claude destructive-Git guardrail is deferred by user request; remind the user before opening the first Claude worktree/session. | Stage 1 |
+| 2026-09-11 | T001 now establishes CI for pushes/pull requests and the only production deployment path: a successful protected-`main` merge deploys Railway and Vercel once, followed by smoke checks. T015 independently hardens that pipeline and proves rollback readiness. | Stage 2 revision / user decision |

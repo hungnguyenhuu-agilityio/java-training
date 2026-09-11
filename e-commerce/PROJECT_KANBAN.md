@@ -1,12 +1,12 @@
 # PROJECT_KANBAN.md
-**Last updated**: 2026-09-08
+**Last updated**: 2026-09-11
 
 > Compact task board. Full context lives in `PROJECT_SPEC.md`; permanent execution contracts live in `tasks/TASK_GUIDE_Txxx.md`.
 
 ## Board
 
 ### Todo
-- [ ] **T001** — Modular runtime, database, and full-stack foundation | Common-Infrastructure-Agent | C2 | Risk: Medium | P0
+- [ ] **T001** — Modular runtime, database, and main-only CI/CD foundation | Common-Infrastructure-Agent | C3 | Risk: High | P0
 - [ ] **T002** — Public product catalog journey | Backend + Frontend | C2 | Risk: Medium | P0
 - [ ] **T003** — Registration, login, and secure session lifecycle | Backend + Frontend | C3 | Risk: High | P0
 - [ ] **T004** — Protected catalog administration | Backend + Frontend | C2 | Risk: High | P0
@@ -20,7 +20,7 @@
 - [ ] **T012** — Administrator fulfillment, cancellation, and refund | Backend + Frontend | C3 | Risk: High | P1
 - [ ] **T013** — Low-stock scanning and transition-based alerting | Backend-Implementer | C2 | Risk: Medium | P1
 - [ ] **T014** — Secured operational metrics and manual controls | Backend-Implementer | C2 | Risk: High | P1
-- [ ] **T015** — Full-stack verification, CI, and deployment readiness | QA + Common Infrastructure | C3 | Risk: High | P0
+- [ ] **T015** — Full-stack CI/CD hardening and release readiness | QA + Common Infrastructure | C3 | Risk: High | P0
 
 ### In Progress
 

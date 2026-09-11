@@ -1,5 +1,5 @@
-# TASK_GUIDE — T015: Full-Stack Verification, CI, and Deployment Readiness
-**Date**: 2026-09-08
+# TASK_GUIDE — T015: Full-Stack CI/CD Hardening and Release Readiness
+**Date**: 2026-09-11
 **Complexity Level**: C3
 **Risk Level**: High
 **Priority**: P0
@@ -13,10 +13,10 @@ Read mandatory project/memory/task/general/QA/infrastructure/codebase-map files.
 
 ## Requirement (Pillar 1 — Adapt the requirement)
 
-Create the independent delivery gate proving the approved application builds, tests, runs, deploys, rolls back, and completes the critical customer/admin journeys.
+Independently harden and certify the T001 delivery pipeline by proving the completed application builds, tests, runs, deploys through the single protected-`main` release path, rolls back, and completes the critical customer/admin journeys.
 
-**Restated intent**: One CI-friendly workflow verifies all task acceptance suites, coverage/mutation thresholds, Compose runtime, secured operations, deployed Browse→Cart→Checkout→Orders behavior, and rollback readiness.  
-**Out of scope**: Implementing missing feature behavior, automatic production release, daily reports, and deferred email delivery.  
+**Restated intent**: The established GitHub Actions workflow is extended with all task acceptance suites, coverage/mutation thresholds, Compose runtime, secured operations, complete OpenAPI validation, deployed Browse→Cart→Checkout→Orders behavior, and an exercised rollback without adding another deployment route.
+**Out of scope**: Implementing missing feature behavior, staging/preview or feature-branch deployment, a second production release path, daily reports, and deferred email delivery.
 **Requirement Refs**: US-010, US-011, FR-012, FR-013, NFR-007, NFR-009, NFR-010, NFR-011, NFR-012, NFR-013, NFR-014.
 
 ### Requirement Fidelity Gate
@@ -37,7 +37,7 @@ Create the independent delivery gate proving the approved application builds, te
 | 1 | One CI-friendly command runs backend, frontend, integration, security, browser, concurrency, coverage, and required mutation suites. | NFR-007, NFR-012, NFR-014 |
 | 2 | Docker Compose starts the complete stack from a clean environment and critical customer/admin journeys pass. | FR-013, NFR-009 |
 | 3 | Reference dataset performance targets pass with no oversell, duplicates, or >1% server errors. | NFR-013 |
-| 4 | GitHub Actions supports controlled Railway/Vercel deployment with protected secrets and explicit rollback procedure. | NFR-010, NFR-011 |
+| 4 | The T001 GitHub Actions pipeline retains CI-only pull-request/non-`main` behavior and exactly one protected-`main` Railway/Vercel release path while adding the complete release gates. | NFR-010, NFR-011 |
 | 5 | Deployed smoke checks verify frontend/backend integration and secured health/metrics without leaking sensitive data. | US-011, FR-013 |
 | 6 | CI generates and structurally validates the complete OpenAPI contract for implemented business endpoints without exposing actuator operations or requiring the interactive UI in production. | US-010, FR-012 |
 
@@ -67,7 +67,7 @@ To be filled by the independent reviewer in `tasks/TASK_REVIEW_T015.md` at Stage
 
 ## Demonstration
 
-**BEFORE**: No single independent command proves all suites, clean Compose startup, critical browser journeys, deployment readiness, and rollback.  
+**BEFORE**: T001 provides baseline CI and a protected-`main` deployment path, but no single independent command proves all completed feature suites, clean Compose startup, critical browser journeys, performance/security thresholds, and exercised rollback.
 **AFTER**: To be captured from the verified implementation.  
 **DELTA**: To be derived from the before/after evidence.  
 **WITNESS**: To be supplied by automated tests and a running-system check.
@@ -76,7 +76,7 @@ To be filled by the independent reviewer in `tasks/TASK_REVIEW_T015.md` at Stage
 
 **Pattern reference**: All preceding task acceptance commands and `templates/TASK_REVIEW_template.md`.  
 **Vital slice**: Clean build → Compose smoke → critical browser flow → rollback proof.  
-**Cut list**: No feature fixes by QA, auto-production release, external email, or daily report.
+**Cut list**: No feature fixes by QA, alternative deployment triggers/environments, external email, or daily report.
 
 ## Edge Case Checklist
 
@@ -90,15 +90,15 @@ To be filled by the independent reviewer in `tasks/TASK_REVIEW_T015.md` at Stage
 
 ## Files to Change (Predicted)
 
-Independent smoke/browser/performance/security/OpenAPI suites, `scripts/verify-build.sh`, Docker/CI/deployment configuration, rollback/runbook documentation, and review evidence files.
+Independent smoke/browser/performance/security/OpenAPI suites, `scripts/verify-build.sh`, additive hardening of the existing Docker/CI/deployment configuration, rollback/runbook documentation, and review evidence files.
 
 ## Files Must NOT Touch
 
-Feature production code except separately triaged fixes returned to owning tasks; production deployment must not execute automatically.
+Feature production code except separately triaged fixes returned to owning tasks; the T001 deployment trigger policy must not gain a second production path or any non-`main` deployment trigger.
 
 ## Test Plan
 
-Clean-environment build, all targeted/full suites, coverage/mutation, generated OpenAPI structural validation, Compose, browser viewports, reference-load, security exposure, preview deployment, and rollback exercise.
+Clean-environment build, all targeted/full suites, coverage/mutation, generated OpenAPI structural validation, Compose, browser viewports, reference-load, security exposure, protected-`main` deployment, post-deployment smoke checks, and rollback exercise.
 
 ## Completion Checklist
 
