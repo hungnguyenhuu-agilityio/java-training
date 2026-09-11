@@ -1,5 +1,5 @@
 # TASK_GUIDE — T003: Registration, Login, and Secure Session Lifecycle
-**Date**: 2026-09-08
+**Date**: 2026-09-11
 **Complexity Level**: C3
 **Risk Level**: High
 **Priority**: P0
@@ -39,6 +39,7 @@ Implement registration, login, authorization, refresh rotation, silent renewal, 
 | 3 | Reload silently refreshes, one expired request retries once, and failure/logout clears authentication state. | FR-003, FR-011 |
 | 4 | Backend roles, ownership, CSRF, and safe Problem Details are enforced independently of the UI. | NFR-001, FR-010 |
 | 5 | Generated OpenAPI accurately describes registration, login, refresh, and logout contracts, including bearer authorization, refresh-cookie/CSRF requirements, and safe Problem Details without secret-bearing examples. | FR-012, FR-010, NFR-002 |
+| 6 | The authenticated-user response exposes the account's roles; Angular derives navigation and guard visibility from them (guest → `/login`, missing role → forbidden page) per `UI_SPEC.md` §4.3. | FR-003, FR-011, NFR-001 |
 
 ## Evaluation & Acceptance
 
@@ -52,6 +53,8 @@ Implement registration, login, authorization, refresh rotation, silent renewal, 
 ```
 
 ## UI / Design Acceptance Criteria
+
+**UI specification**: [`UI_SPEC.md` §8 — T003 Authentication and Session UI](../UI_SPEC.md#t003-authentication)
 
 | Evidence | Method | Expected result |
 |---|---|---|

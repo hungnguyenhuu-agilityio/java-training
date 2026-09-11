@@ -1,5 +1,5 @@
 # TASK_GUIDE — T008: Stripe Checkout and Verified Payment Confirmation
-**Date**: 2026-09-08
+**Date**: 2026-09-11
 **Complexity Level**: C3
 **Risk Level**: High
 **Priority**: P0
@@ -38,7 +38,7 @@ Complete checkout through a provider-neutral port and Stripe-hosted session, usi
 | 2 | Session/refund commands use deterministic idempotency and interrupted calls reconcile without duplicate effects. | FR-006B |
 | 3 | Raw-body signatures, replay protection, durable deduplication, and out-of-order handling guard webhooks. | NFR-006B |
 | 4 | Only a verified successful webhook commits reservation and confirms order; browser return only informs UX. | FR-006A |
-| 5 | Angular checkout submits once, redirects, and displays pending/confirmed/cancelled/error states safely. | FR-011 |
+| 5 | Angular checkout submits once, redirects, and displays pending/confirmed/cancelled/error states safely; the pending result re-reads backend state every 2s for at most 30s, then offers `Refresh status` and an order link (`UI_SPEC.md` §12). | FR-011 |
 | 6 | Generated OpenAPI describes the customer checkout-session contract and separates or hides the provider webhook from public interactive documentation while preserving its authenticated integration contract. | FR-012, NFR-006B |
 
 ## Evaluation & Acceptance
@@ -53,6 +53,8 @@ Complete checkout through a provider-neutral port and Stripe-hosted session, usi
 ```
 
 ## UI / Design Acceptance Criteria
+
+**UI specification**: [`UI_SPEC.md` §12 — T008 Checkout and Payment Result](../UI_SPEC.md#t008-checkout-payment)
 
 | Evidence | Method | Expected result |
 |---|---|---|

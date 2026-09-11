@@ -1,5 +1,5 @@
 # TASK_GUIDE — T011: Customer Order History and Ownership Protection
-**Date**: 2026-09-08
+**Date**: 2026-09-11
 **Complexity Level**: C2
 **Risk Level**: High
 **Priority**: P0
@@ -52,6 +52,8 @@ Expose authenticated customers' immutable order snapshots and status histories w
 ```
 
 ## UI / Design Acceptance Criteria
+
+**UI specification**: [`UI_SPEC.md` §13 — T011 Customer Orders](../UI_SPEC.md#t011-customer-orders)
 
 | Evidence | Method | Expected result |
 |---|---|---|

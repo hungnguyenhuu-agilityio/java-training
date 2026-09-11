@@ -1,5 +1,5 @@
 # TASK_GUIDE — T012: Administrator Fulfillment, Cancellation, and Refund
-**Date**: 2026-09-08
+**Date**: 2026-09-11
 **Complexity Level**: C3
 **Risk Level**: High
 **Priority**: P1
@@ -52,6 +52,8 @@ Deliver protected administrator order review, legal fulfillment transitions, and
 ```
 
 ## UI / Design Acceptance Criteria
+
+**UI specification**: [`UI_SPEC.md` §14 — T012 Order Administration](../UI_SPEC.md#t012-order-administration)
 
 | Evidence | Method | Expected result |
 |---|---|---|

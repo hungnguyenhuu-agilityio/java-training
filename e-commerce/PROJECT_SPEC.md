@@ -1,6 +1,6 @@
 # PROJECT_SPEC.md
 **Last updated**: 2026-09-11
-**Version**: 1.2
+**Version**: 1.3
 
 > **Scope of this document**: How to build the product safely. Product intent, personas, user stories, functional requirements, non-functional requirements, and success metrics live in `PRD.md`.
 
@@ -24,6 +24,8 @@
 The backend is a package-enforced modular monolith organized by business capability: identity, catalog, cart, inventory, ordering, payment, and a deliberately small shared kernel. Each module applies Clean Architecture internally, with domain and application logic independent of Spring MVC, JPA, Stripe, and deployment details. Spring Modulith and focused architecture tests enforce module APIs, acyclic dependencies, and inward dependency direction.
 
 The Angular application uses standalone components and feature-oriented boundaries for authentication, catalog, cart, checkout, orders, and administration. A Vercel same-origin `/api` proxy fronts the Railway backend so short-lived access tokens can remain in memory while rotated refresh tokens use secure, HttpOnly cookies.
+
+`UI_SPEC.md` is the canonical visual and interaction contract. It defines a lean, light-only Angular Material interface with one role-aware shell, desktop-first responsive behavior, task-scoped ASCII wireframes, and WCAG 2.2 AA as the accessibility target. Backend/OpenAPI contracts remain authoritative for fields, validation, permissions, and state transitions.
 
 MySQL is the single transactional store. Liquibase owns all schema changes. Stripe participates through a provider-neutral payment port; no database transaction may remain open across provider calls. Checkout and refund consistency use local ACID transitions, idempotency, verified webhooks, compensation, and reconciliation.
 
@@ -63,6 +65,7 @@ Module roots expose intentional application contracts. Domain types, persistence
 - GoF State classes, generic CRUD layers, generic repositories, mediator frameworks, and speculative interfaces are prohibited unless a task guide names the concrete variability they solve.
 - Catalog filter composition may use the Specification pattern when combinations justify it.
 - Every architectural rule must have an executable test where technically feasible.
+- UI-bearing tasks must follow `UI_SPEC.md`; agents may not invent fields, permissions, state transitions, screen behavior, or an additional component library.
 
 ---
 
@@ -174,3 +177,5 @@ Stage 2 decomposes the approved product into 15 dependency-ordered tracer-bullet
 | 2026-09-08 | Stage 2 produced 15 dependency-ordered task guides: 13 AFK and 2 HITL; warehouse/concurrency work is integrated after its real catalog, identity, cart, and payment prerequisites. | Stage 2 planning |
 | 2026-09-08 | The Claude destructive-Git guardrail is deferred by user request; remind the user before opening the first Claude worktree/session. | Stage 1 |
 | 2026-09-11 | T001 now establishes CI for pushes/pull requests and the only production deployment path: a successful protected-`main` merge deploys Railway and Vercel once, followed by smoke checks. T015 independently hardens that pipeline and proves rollback readiness. | Stage 2 revision / user decision |
+| 2026-09-11 | Path A selected for UI: a lean light-only Angular Material interface, shared role-aware shell, desktop-first responsive evidence, backend-owned contracts, English copy, backend-defined currency, and WCAG 2.2 AA. | UI brainstorming and terminology grilling |
+| 2026-09-11 | UI_SPEC review: role-based visibility (`CUSTOMER` unlocks cart/checkout/orders, `ADMIN` does not imply it), guest→login / missing-role→forbidden guards, AA-compliant warning and control-border tokens, bounded 2s/30s payment-result polling, inactive cart-line handling, single-currency stop rule, and baselines committed after each task's Stage 4. | Supervisor UI_SPEC review / user approval |

@@ -1,5 +1,5 @@
 # TASK_GUIDE — T005: Authenticated Shopping-Cart Journey
-**Date**: 2026-09-08
+**Date**: 2026-09-11
 **Complexity Level**: C2
 **Risk Level**: Medium
 **Priority**: P0
@@ -36,7 +36,7 @@ Deliver one authenticated cart per customer through API and Angular UI.
 |---|---|---|
 | 1 | Authenticated customer can add/update/remove/clear only their cart with positive bounded quantities. | FR-004, NFR-001 |
 | 2 | Cart returns authoritative product/price snapshots for display and handles inactive/missing products safely. | FR-004, FR-010 |
-| 3 | Angular cart shows items/totals and prevents invalid or duplicate UI submissions. | FR-011 |
+| 3 | Angular catalog/detail shows the approved guest sign-in CTA or authorized add-to-cart action; the cart shows items/totals and prevents invalid or duplicate UI submissions. | FR-011 |
 | 4 | Generated OpenAPI describes cart operations, quantity constraints, response schemas, bearer authorization, and Problem Details. | FR-012, FR-010, NFR-001 |
 
 ## Evaluation & Acceptance
@@ -51,6 +51,8 @@ Deliver one authenticated cart per customer through API and Angular UI.
 ```
 
 ## UI / Design Acceptance Criteria
+
+**UI specification**: [`UI_SPEC.md` §10 — T005 Shopping Cart](../UI_SPEC.md#t005-shopping-cart)
 
 | Evidence | Method | Expected result |
 |---|---|---|
@@ -83,7 +85,7 @@ To be filled by the independent reviewer in `tasks/TASK_REVIEW_T005.md` at Stage
 
 ## Files to Change (Predicted)
 
-Cart module migration/domain/application/web/persistence/tests and Angular cart feature/navigation/tests.
+Cart module migration/domain/application/web/persistence/tests and Angular catalog cart-actions, cart feature/navigation, and tests.
 
 ## Files Must NOT Touch
 

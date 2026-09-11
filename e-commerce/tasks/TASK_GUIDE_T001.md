@@ -1,15 +1,15 @@
-# TASK_GUIDE — T001: Modular Runtime, Database, and Main-Only CI/CD Foundation
+# TASK_GUIDE — T001: Modular Runtime, Database, UI Shell, and Main-Only CI/CD Foundation
 **Date**: 2026-09-11
 **Complexity Level**: C3
 **Risk Level**: High
 **Priority**: P0
 **Execution Type**: HITL
-**Assigned agent**: Common-Infrastructure-Agent
-**Agent guide**: `agents/common-infrastructure.md`
+**Assigned agents**: Common-Infrastructure-Agent (lead), Frontend-Implementer
+**Agent guides**: `agents/common-infrastructure.md`, `agents/frontend.md`
 
 ## Mandatory Startup (Do Not Skip)
 
-Read `PROJECT_SPEC.md`, `memory/MEMORY.md`, this guide, `agents/common-infrastructure.md`, `agents/general-agent-template.md`, and `memory/codebase-map.md` if present. Apply C3 decomposition and adversarial-verification rules. Run `migration-safety` before creating or applying Liquibase changes. Obtain human confirmation for GitHub branch protection, protected environment secrets, and Railway/Vercel project configuration; never print or commit secret values.
+Read `PROJECT_SPEC.md`, `UI_SPEC.md`, `memory/MEMORY.md`, this guide, both assigned agent guides, `agents/general-agent-template.md`, and `memory/codebase-map.md` if present. Apply C3 decomposition and adversarial-verification rules. Run `migration-safety` before creating or applying Liquibase changes. Obtain human confirmation for GitHub branch protection, protected environment secrets, and Railway/Vercel project configuration; never print or commit secret values.
 
 ## Requirement (Pillar 1 — Adapt the requirement)
 
@@ -19,7 +19,7 @@ Establish the reproducible runtime, database, architecture, and delivery-automat
 
 **Out of scope**: Business features, staging/preview environments, deployment from feature branches or pull requests, a second production release path, complete feature-level end-to-end/performance/security suites, and broad shared abstractions.
 
-**Requirement Refs**: US-011, FR-012, NFR-004, NFR-005, NFR-009, NFR-010, NFR-011, NFR-012.
+**Requirement Refs**: US-011, FR-011, FR-012, NFR-004, NFR-005, NFR-009, NFR-010, NFR-011, NFR-012.
 
 ### Requirement Fidelity Gate
 
@@ -47,6 +47,7 @@ Establish the reproducible runtime, database, architecture, and delivery-automat
 | 8 | One successful protected-`main` merge triggers exactly one serialized production release path that deploys the Railway backend and Vercel frontend only after CI succeeds. | US-011, NFR-010 |
 | 9 | The release fails if either target deployment or the post-deployment health/integration smoke checks fail; logs and artifacts contain no protected values. | NFR-010, NFR-011 |
 | 10 | A documented baseline rollback restores the last known-good application release, and Liquibase changes are verified as backward-compatible with that rollback path. | NFR-011 |
+| 11 | The Angular starter screen is replaced by the approved light-only Angular Material theme and shared role-aware shell foundation without implementing feature behavior. | FR-011 |
 
 ## Evaluation & Acceptance
 
@@ -58,12 +59,15 @@ Establish the reproducible runtime, database, architecture, and delivery-automat
 | Pull request or non-`main` push | CI runs and deployment jobs remain skipped without production-secret access | Workflow policy test plus GitHub run evidence |
 | Successful protected-`main` merge | Required CI passes, one serialized Railway/Vercel release runs, and post-deployment smoke checks pass | GitHub deployment run and target health evidence |
 | Failed target deployment or smoke check | Release reports failure and the documented last-known-good rollback is executable | Failure-path test plus rollback verification |
+| Shared shell at required viewports and keyboard input | Approved navigation hierarchy, focus behavior, Material theme, and no overflow | Component/browser accessibility and screenshot tests |
 
 ```bash
 docker compose config && (cd backend && ./mvnw test) && (cd frontend && npm test -- --watch=false && npm run build) && ./scripts/verify-ci-policy.sh
 ```
 
 ## UI / Design Acceptance Criteria
+
+**UI specification**: [`UI_SPEC.md` §6 — T001 Shared Shell and Material Foundation](../UI_SPEC.md#t001-shared-shell)
 
 | Evidence | Verification method | Expected result |
 |---|---|---|
