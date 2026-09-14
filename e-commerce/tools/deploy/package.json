@@ -1,0 +1,9 @@
+{
+  "name": "e-commerce-deploy-tools",
+  "private": true,
+  "description": "Pinned deployment CLIs for the production release and rollback jobs.",
+  "dependencies": {
+    "@railway/cli": "5.52.0",
+    "vercel": "59.15.1"
+  }
+}

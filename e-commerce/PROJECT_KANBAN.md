@@ -6,7 +6,6 @@
 ## Board
 
 ### Todo
-- [ ] **T001** — Modular runtime, database, UI shell, and main-only CI/CD foundation | Common Infrastructure + Frontend | C3 | Risk: High | P0
 - [ ] **T002** — Public product catalog journey | Backend + Frontend | C2 | Risk: Medium | P0
 - [ ] **T003** — Registration, login, and secure session lifecycle | Backend + Frontend | C3 | Risk: High | P0
 - [ ] **T004** — Protected catalog administration | Backend + Frontend | C2 | Risk: High | P0
@@ -24,7 +23,7 @@
 
 ### In Progress
 
-No tasks currently in progress.
+- [ ] **T001** — Modular runtime, database, UI shell, and main-only CI/CD foundation | Common Infrastructure + Frontend | C3 | Risk: High | P0 — 🔄 2026-09-14: backend namespace changed to `com.training.ecommerce`, Maven group to `com.training`, shared module renamed to `shareddomain`, and module detection limited to the eight explicit capability roots. Playwright and its CI/visual assets were removed by user direction; F16–F19 have Angular regression coverage, but fresh real-browser accessibility/responsiveness evidence is now explicitly unverified. Backend verify passes (18 run, 1 Docker-gated skip), frontend passes (8 tests + production build), CI policy passes, and all Compose services are container-healthy; host-loopback smoke is environment-blocked in this managed session. Targeted Stage 4 review, HTML reports, O7 human setup, and real release/rollback evidence remain. Not Done. See `tasks/TASK_REVIEW_T001.md`
 
 ### Ready for Review
 
@@ -48,6 +47,6 @@ No tasks completed yet.
 | 1 Environment Setup | ✅ Done |
 | 1.5 Sub-Agent Architecture | ✅ Done |
 | 2 Planning (/plan) | ✅ Done |
-| 3 Execution | ⬜ Not Started |
+| 3 Execution | 🔄 In Progress |
 | 4 Review | ⬜ Not Started |
 | 5 Integration & Verify | ⬜ Not Started |
