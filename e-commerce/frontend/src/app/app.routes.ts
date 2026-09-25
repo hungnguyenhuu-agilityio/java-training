@@ -2,17 +2,6 @@ import { Component } from '@angular/core';
 import { RouterLink, Routes } from '@angular/router';
 
 @Component({
-  selector: 'app-products-placeholder',
-  template: `
-    <section aria-labelledby="products-title">
-      <h1 id="products-title">Products</h1>
-      <p>The product catalog will be available in the next delivery slice.</p>
-    </section>
-  `,
-})
-export class ProductsPlaceholder {}
-
-@Component({
   selector: 'app-login-placeholder',
   template: `
     <section aria-labelledby="login-title">
@@ -38,7 +27,10 @@ export class NotFoundPlaceholder {}
 
 export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'products' },
-  { path: 'products', component: ProductsPlaceholder, title: 'Products | E-Commerce' },
+  {
+    path: 'products',
+    loadChildren: () => import('./features/catalog/catalog.routes').then((m) => m.catalogRoutes),
+  },
   { path: 'login', component: LoginPlaceholder, title: 'Log in | E-Commerce' },
   { path: '**', component: NotFoundPlaceholder, title: 'Page not found | E-Commerce' },
 ];

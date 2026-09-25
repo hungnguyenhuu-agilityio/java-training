@@ -1,0 +1,46 @@
+.detail {
+  max-width: 1200px;
+  margin-inline: auto;
+  padding: 24px;
+}
+
+.status {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 24px;
+}
+
+.status.alert {
+  border: 1px solid var(--color-error);
+  border-radius: 8px;
+  color: var(--color-error);
+}
+
+.content {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  margin-block-start: 16px;
+}
+
+.thumbnail {
+  width: 100%;
+  max-width: 280px;
+  aspect-ratio: 4 / 3;
+  background: var(--color-surface-muted);
+}
+
+.breadcrumb-link {
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+.breadcrumb-link:hover {
+  text-decoration: underline;
+}
+
+.price {
+  color: var(--color-text-muted);
+}

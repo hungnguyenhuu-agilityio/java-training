@@ -86,7 +86,7 @@ done
 
 smoke_script="${scripts_directory}/smoke-production.sh"
 grep -q 'curl --fail' "${smoke_script}" || fail 'post-deployment smoke checks must fail closed'
-grep -q '/api/actuator/health' "${smoke_script}" || fail 'post-deployment smoke checks must cover the frontend /api proxy'
+grep -q '/api/catalog/categories' "${smoke_script}" || fail 'post-deployment smoke checks must cover the frontend /api proxy'
 
 first_secret_line="$(grep -n 'secrets\.' "${workflow_path}" | head -1 | cut -d: -f1 || true)"
 first_release_line="$(grep -nE '^  (deploy|rollback)-production:' "${workflow_path}" | head -1 | cut -d: -f1)"

@@ -63,14 +63,11 @@ Deliver public product discovery from persisted catalog records through API and 
 
 ### Evidence
 
-To be filled by the independent reviewer in `tasks/TASK_REVIEW_T002.md` at Stage 4/5.
+> **Moved.** See `tasks/TASK_REVIEW_T002.md`.
 
 ## Demonstration
 
-**BEFORE**: No catalog domain, public catalog API, catalog route, product detail route, or catalog acceptance test exists.  
-**AFTER**: To be captured from the verified implementation.  
-**DELTA**: To be derived from the before/after evidence.  
-**WITNESS**: To be supplied by automated tests and a running-system check.
+> **Moved.** See `tasks/TASK_REVIEW_T002.md`.
 
 ## Approach
 

@@ -6,7 +6,6 @@
 ## Board
 
 ### Todo
-- [ ] **T002** — Public product catalog journey | Backend + Frontend | C2 | Risk: Medium | P0
 - [ ] **T003** — Registration, login, and secure session lifecycle | Backend + Frontend | C3 | Risk: High | P0
 - [ ] **T004** — Protected catalog administration | Backend + Frontend | C2 | Risk: High | P0
 - [ ] **T005** — Authenticated shopping-cart journey | Backend + Frontend | C2 | Risk: Medium | P0
@@ -27,11 +26,11 @@
 
 ### Ready for Review
 
-No tasks currently ready for review.
+None.
 
 ### Done
 
-No tasks completed yet.
+- [x] **T002** — Public product catalog journey | Backend + Frontend | C2 | Risk: Medium | P0 — ✅ 2026-09-25 Done (Stage 5). Evidence 9/9 pass in `tasks/TASK_REVIEW_T002.md`: backend verify 74/0/3, frontend 28 tests + build, NFR-013 target p95 92 ms, real-browser 42/42 at 375/768/1280, `/verify` PASS through the `/api` proxy. Stage 4: code-review P1×2 + P2 fixed (P3×4 optional open), security-review no vulnerabilities, `/api` proxy prefix strip fixed (user decision), 2 visual defects fixed. Reports: `reports/code-review_develop_20260925T155300.html`, `reports/security-review_develop_20260925T155312.html`, `reports/delivery-report_develop_20260925T101714.html`. **Uncommitted in working tree — user commits.**
 
 ## Blocked
 
@@ -48,5 +47,5 @@ No tasks completed yet.
 | 1.5 Sub-Agent Architecture | ✅ Done |
 | 2 Planning (/plan) | ✅ Done |
 | 3 Execution | 🔄 In Progress |
-| 4 Review | ⬜ Not Started |
-| 5 Integration & Verify | ⬜ Not Started |
+| 4 Review | 🔄 In Progress (T002 ✅; T001 HTML reports open) |
+| 5 Integration & Verify | 🔄 In Progress (T002 ✅) |

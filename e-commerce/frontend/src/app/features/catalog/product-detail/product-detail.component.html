@@ -1,0 +1,43 @@
+<section class="detail">
+  @switch (state()) {
+    @case ('loading') {
+      <div class="status" data-testid="detail-loading" role="status" aria-live="polite">
+        <span>Loading product…</span>
+      </div>
+    }
+    @case ('not-found') {
+      <div class="status" data-testid="detail-not-found">
+        <h1>Product not found</h1>
+        <p>This product is unavailable or no longer exists.</p>
+        <a mat-button routerLink="/products">Return to products</a>
+      </div>
+    }
+    @case ('server-failure') {
+      <div class="status alert" data-testid="detail-server-failure" role="alert">
+        <h1>Unable to load product</h1>
+        <p>Something went wrong loading this product. Please try again.</p>
+        <button mat-stroked-button type="button" (click)="retry()">Retry</button>
+      </div>
+    }
+    @case ('ready') {
+      @if (product(); as product) {
+        <nav class="breadcrumb" aria-label="Breadcrumb">
+          <a class="breadcrumb-link" routerLink="/products">Products</a>
+          <span> / </span>
+          <span>{{ product.name }}</span>
+        </nav>
+
+        <div class="content">
+          <div class="thumbnail" aria-hidden="true"></div>
+          <div class="info">
+            <h1>{{ product.name }}</h1>
+            <p class="price">{{ product.price | currency: product.currency }}</p>
+            @if (product.description) {
+              <p class="description">{{ product.description }}</p>
+            }
+          </div>
+        </div>
+      }
+    }
+  }
+</section>

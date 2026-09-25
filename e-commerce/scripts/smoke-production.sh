@@ -7,6 +7,6 @@ set -euo pipefail
 
 curl --fail --silent --show-error --retry 12 --retry-delay 10 --retry-all-errors "${BACKEND_HEALTH_URL}" >/dev/null
 curl --fail --silent --show-error --retry 12 --retry-delay 10 --retry-all-errors "${FRONTEND_HEALTH_URL}" >/dev/null
-curl --fail --silent --show-error --retry 12 --retry-delay 10 --retry-all-errors "${FRONTEND_HEALTH_URL%/}/api/actuator/health" >/dev/null
+curl --fail --silent --show-error --retry 12 --retry-delay 10 --retry-all-errors "${FRONTEND_HEALTH_URL%/}/api/catalog/categories" >/dev/null
 
-echo "Production backend, frontend, and /api proxy health checks passed."
+echo "Production backend, frontend, and /api proxy (catalog) health checks passed."
