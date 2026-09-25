@@ -1,5 +1,5 @@
 # PROJECT_KANBAN.md
-**Last updated**: 2026-09-11
+**Last updated**: 2026-09-25
 
 > Compact task board. Full context lives in `PROJECT_SPEC.md`; permanent execution contracts live in `tasks/TASK_GUIDE_Txxx.md`.
 
@@ -23,7 +23,7 @@
 
 ### In Progress
 
-- [ ] **T001** — Modular runtime, database, UI shell, and main-only CI/CD foundation | Common Infrastructure + Frontend | C3 | Risk: High | P0 — 🔄 2026-09-14: backend namespace changed to `com.training.ecommerce`, Maven group to `com.training`, shared module renamed to `shareddomain`, and module detection limited to the eight explicit capability roots. Playwright and its CI/visual assets were removed by user direction; F16–F19 have Angular regression coverage, but fresh real-browser accessibility/responsiveness evidence is now explicitly unverified. Backend verify passes (18 run, 1 Docker-gated skip), frontend passes (8 tests + production build), CI policy passes, and all Compose services are container-healthy; host-loopback smoke is environment-blocked in this managed session. Targeted Stage 4 review, HTML reports, O7 human setup, and real release/rollback evidence remain. Not Done. See `tasks/TASK_REVIEW_T001.md`
+- [ ] **T001** — Modular runtime, database, UI shell, and main-only CI/CD foundation | Common Infrastructure + Frontend | C3 | Risk: High | P0 — 🔄 2026-09-14: backend namespace changed to `com.training.ecommerce`, Maven group to `com.training`, shared module renamed to `shareddomain`, and module detection limited to the eight explicit capability roots. Playwright and its CI/visual assets were removed by user direction; F16–F19 have Angular regression coverage, but fresh real-browser accessibility/responsiveness evidence is now explicitly unverified. Backend verify passes (18 run, 1 Docker-gated skip), frontend passes (8 tests + production build), CI policy passes, and all Compose services are container-healthy; host-loopback smoke is environment-blocked in this managed session. Targeted Stage 4 review, HTML reports, O7 human setup, and real release/rollback evidence remain. Not Done. 🔄 2026-09-25: code-review round 3 fixed a P1 MySQL healthcheck race (cold-start backend crash); host + nginx `/api` smoke now PASS on two cold starts. Real-browser F16–F19 + 375/768/1280 evidence PASS via easy-ui-mcp Playwright container. Open: P2 Escape-test gap, HTML reports; O7 + real release/rollback deferred by user 2026-09-25, O7, real release/rollback. See `tasks/TASK_REVIEW_T001.md`
 
 ### Ready for Review
 
