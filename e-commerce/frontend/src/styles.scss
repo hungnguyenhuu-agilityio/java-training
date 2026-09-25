@@ -1,0 +1,78 @@
+@use '@angular/material' as mat;
+
+// Single source of the UI_SPEC §3.2 semantic tokens. Material system variables below
+// reference these values so feature styles never need a color literal.
+:root {
+  --color-primary: #1565c0;
+  --color-primary-strong: #0d47a1;
+  --color-surface: #ffffff;
+  --color-surface-muted: #f5f7fa;
+  --color-text: #1f2937;
+  --color-text-muted: #4b5563;
+  --color-border: #d1d5db;
+  --color-control-border: #6b7280;
+  --color-success: #2e7d32;
+  --color-warning: #b45309;
+  --color-warning-fill: #ed6c02;
+  --color-error: #b3261e;
+  --color-focus: #005fcc;
+}
+
+html {
+  color-scheme: light;
+  font-size: 16px;
+
+  @include mat.theme(
+    (
+      color: (
+        theme-type: light,
+        primary: mat.$blue-palette,
+      ),
+      typography: (
+        plain-family: (system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif),
+        brand-family: (system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif),
+      ),
+      density: 0,
+    )
+  );
+
+  @include mat.theme-overrides(
+    (
+      primary: var(--color-primary),
+      on-primary: var(--color-surface),
+      surface: var(--color-surface),
+      background: var(--color-surface-muted),
+      on-surface: var(--color-text),
+      on-surface-variant: var(--color-text-muted),
+      outline: var(--color-control-border),
+      outline-variant: var(--color-border),
+      error: var(--color-error),
+      corner-small: 8px,
+      corner-medium: 8px,
+    )
+  );
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100%;
+  background: var(--mat-sys-background);
+  color: var(--mat-sys-on-surface);
+  font: var(--mat-sys-body-large);
+}
+
+button,
+a {
+  font: inherit;
+}
+
+:focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 3px;
+}

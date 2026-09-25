@@ -4,9 +4,8 @@ Spring Boot REST API for the e-commerce practice application. The backend will
 provide the product catalog, authentication and authorization, shopping cart,
 checkout, order history, and operational endpoints used by the frontend.
 
-> **Current status:** this directory contains the initial Spring Boot scaffold.
-> Domain features, API endpoints, database configuration, and Liquibase
-> changelogs have not been implemented yet.
+> **Current status:** T001 provides the runtime, Liquibase baseline, module boundaries, health, and
+> generated OpenAPI foundation. Domain features and business API endpoints remain planned.
 
 ## Technology stack
 
@@ -21,6 +20,8 @@ checkout, order history, and operational endpoints used by the frontend.
 - Spring Boot Actuator
 - Maven Wrapper
 - Lombok
+- Spring Modulith and ArchUnit
+- Springdoc OpenAPI 3.1.1
 
 ## Prerequisites
 
@@ -34,11 +35,11 @@ You do not need to install Maven; the repository includes Maven Wrapper scripts.
 ```text
 backend/
 ├── .mvn/wrapper/                  # Maven Wrapper configuration
-├── src/main/java/com/example/ecommerce/
+├── src/main/java/com/training/ecommerce/
 │   └── ECommerceApplication.java # Application entry point
 ├── src/main/resources/
 │   └── application.properties    # Spring configuration
-├── src/test/java/com/example/ecommerce/
+├── src/test/java/com/training/ecommerce/
 │   └── ECommerceApplicationTests.java
 ├── mvnw                           # Maven Wrapper for Linux and macOS
 ├── mvnw.cmd                       # Maven Wrapper for Windows
@@ -47,42 +48,49 @@ backend/
 
 ## Configuration
 
-Only the application name is configured in the initial scaffold. Before the
-application can connect to MySQL, add the datasource settings and the first
-Liquibase changelog. Prefer environment variables for credentials.
+Runtime datasource settings use environment variables, Liquibase owns schema creation, and
+Hibernate validates rather than mutates the schema.
 
 Common Spring environment variables are:
 
 | Variable | Example | Purpose |
 | --- | --- | --- |
-| `SPRING_DATASOURCE_URL` | `jdbc:mysql://localhost:3306/ecommerce` | JDBC connection URL |
+| `SPRING_DATASOURCE_URL` | `jdbc:mysql://localhost:13306/ecommerce` | JDBC connection URL |
 | `SPRING_DATASOURCE_USERNAME` | `ecommerce` | Database user |
 | `SPRING_DATASOURCE_PASSWORD` | `change-me` | Database password |
 | `SPRING_JPA_HIBERNATE_DDL_AUTO` | `validate` | Validate entities against the migrated schema |
 | `SPRING_PROFILES_ACTIVE` | `local` | Select a Spring profile once profiles are added |
+| `PORT` | `8080` | HTTP port; injected by Railway, defaults to `8080` |
+
+The three `SPRING_DATASOURCE_*` variables are required outside the `local` profile; only
+`application-local.properties` supplies host-mode defaults. Those defaults target the Compose MySQL
+published on host port `13306` (or `MYSQL_HOST_PORT`) with the development-only password
+`ecommerce-local`, so a host-mode run never reaches another MySQL on port `3306`. Start just the
+database with `docker compose up --detach --wait mysql` from the repository root.
 
 Do not commit real passwords or tokens. Local values can be exported in the
 shell or supplied through an ignored local configuration file.
 
 Tests use an in-memory H2 database and do not require a local MySQL instance.
-Liquibase is disabled in the test profile until the first changelog is added.
+Tests enable Liquibase against an isolated H2 database in MySQL compatibility mode.
 
 ## Run locally
 
 From the `backend` directory:
 
 ```bash
-./mvnw spring-boot:run
+./mvnw spring-boot:run -Dspring-boot.run.profiles=local
 ```
 
 On Windows:
 
 ```powershell
-.\mvnw.cmd spring-boot:run
+.\mvnw.cmd spring-boot:run "-Dspring-boot.run.profiles=local"
 ```
 
-The default HTTP port is `8080`. Startup currently requires completing the
-database and Liquibase configuration described above.
+The default HTTP port is `8080`. Start MySQL first or use `docker compose up --build` from the
+repository root; Compose publishes the backend at `http://localhost:18080` and MySQL on host port
+`13306` (override with `BACKEND_HOST_PORT` / `MYSQL_HOST_PORT`).
 
 ## Build and test
 
@@ -121,8 +129,8 @@ The backend is intended to expose REST endpoints for:
 - customer order history and administrator order management; and
 - health and metrics through Actuator.
 
-API paths and payloads should be documented after their controllers are
-implemented. OpenAPI/Swagger UI is not available in the current scaffold.
+OpenAPI paths and payloads are generated as controllers are implemented. JSON API docs and Swagger
+UI are available only in the `local` profile; production defaults disable both.
 
 ## Development guidelines
 

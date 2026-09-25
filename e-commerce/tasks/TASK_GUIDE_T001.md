@@ -39,7 +39,7 @@ Establish the reproducible runtime, database, architecture, and delivery-automat
 |---|---|---|
 | 1 | One documented command starts backend, frontend, and MySQL with health-aware dependencies. | NFR-009 |
 | 2 | Liquibase exclusively creates the baseline schema; ORM mutation is disabled. | NFR-004 |
-| 3 | Automated architecture tests reject cycles and outward domain/application dependencies. | NFR-005 |
+| 3 | The backend uses Maven coordinates `com.training:ecommerce` and Java base package `com.training.ecommerce`; automated architecture tests admit only the eight explicitly annotated business modules and reject cycles and outward domain/application dependencies. | NFR-005 |
 | 4 | Backend and frontend build and test independently in CI-friendly mode. | NFR-012 |
 | 5 | A pinned Springdoc WebMVC dependency generates a valid OpenAPI document in test/local profiles; interactive documentation is disabled or access-controlled outside approved profiles. | FR-012 |
 | 6 | GitHub Actions runs backend, frontend, architecture, migration, and Compose smoke gates for pull requests and pushes; failed required checks block the protected `main` merge path. | NFR-009, NFR-010, NFR-012 |
@@ -54,6 +54,7 @@ Establish the reproducible runtime, database, architecture, and delivery-automat
 | Given | Expect | Check |
 |---|---|---|
 | Clean checkout with prerequisites | Builds and starts the complete local stack | Docker smoke test |
+| Backend architecture scan | Finds the `com.training.ecommerce` base package and exactly the eight approved business modules | Automated architecture test |
 | Illegal module dependency fixture | Architecture test fails | Automated test |
 | Booted backend in the test profile | OpenAPI JSON loads with project metadata and no actuator operations | MVC integration test |
 | Pull request or non-`main` push | CI runs and deployment jobs remain skipped without production-secret access | Workflow policy test plus GitHub run evidence |

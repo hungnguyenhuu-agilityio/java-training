@@ -1,6 +1,6 @@
 # PROJECT_SPEC.md
-**Last updated**: 2026-09-11
-**Version**: 1.3
+**Last updated**: 2026-09-14
+**Version**: 1.4
 
 > **Scope of this document**: How to build the product safely. Product intent, personas, user stories, functional requirements, non-functional requirements, and success metrics live in `PRD.md`.
 
@@ -9,6 +9,7 @@
 ## Project Identity
 
 - **Name**: E-Commerce Java Practice
+- **Backend coordinates**: Maven `com.training:ecommerce`; Java base package `com.training.ecommerce`
 - **Repositories**: `gitlab` (`git@gitlab.asoft-python.com:hung.nguyenhuu/java-training.git`) and `github` (`git@github-agilityio:hungnguyenhuu-agilityio/java-training.git`)
 - **Primary technology**: Java 21, Spring Boot 4.1.1, Angular 22.1, MySQL 8.4.11
 - **Type**: Full-stack web application and senior Java/Spring portfolio project
@@ -21,7 +22,7 @@
 
 ## Architecture Summary
 
-The backend is a package-enforced modular monolith organized by business capability: identity, catalog, cart, inventory, ordering, payment, and a deliberately small shared kernel. Each module applies Clean Architecture internally, with domain and application logic independent of Spring MVC, JPA, Stripe, and deployment details. Spring Modulith and focused architecture tests enforce module APIs, acyclic dependencies, and inward dependency direction.
+The backend is a package-enforced modular monolith organized by business capability: identity, catalog, cart, inventory, ordering, payment, and a deliberately small shared-domain module. Each module applies Clean Architecture internally, with domain and application logic independent of Spring MVC, JPA, Stripe, and deployment details. Spring Modulith uses explicitly annotated module roots, and focused architecture tests enforce the exact module inventory, module APIs, acyclic dependencies, and inward dependency direction.
 
 The Angular application uses standalone components and feature-oriented boundaries for authentication, catalog, cart, checkout, orders, and administration. A Vercel same-origin `/api` proxy fronts the Railway backend so short-lived access tokens can remain in memory while rotated refresh tokens use secure, HttpOnly cookies.
 
@@ -42,9 +43,9 @@ MySQL is the single transactional store. Liquibase owns all schema changes. Stri
 | `ordering` | Orders, order items, selected-warehouse and shipping snapshots, fulfillment state/history | Checkout/order queries, administrator transition contracts, and confirmed-order facts |
 | `payment` | Payment sessions, payment/refund state, Stripe event handling | Provider-neutral payment and refund application contracts |
 | `notification` | Deduplicated notification requests and delivery attempts | Confirmed-order and low-stock notification application contracts |
-| `sharedkernel` | Stable cross-module primitives only | Identifiers, money/currency, and domain-event primitives when genuinely shared |
+| `shareddomain` | Stable cross-module domain primitives only | Identifiers, money/currency, and domain-event primitives when genuinely shared |
 
-Module roots expose intentional application contracts. Domain types, persistence adapters, controllers, and provider implementations remain internal unless a reviewed dependency requires otherwise. `sharedkernel` is not a utilities package.
+Module roots expose intentional application contracts. Domain types, persistence adapters, controllers, and provider implementations remain internal unless a reviewed dependency requires otherwise. `shareddomain` is not a utilities package.
 
 ---
 

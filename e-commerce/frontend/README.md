@@ -86,6 +86,30 @@ npm start
 
 Open `http://localhost:4200/`. The development server reloads when source files change.
 
+To develop the frontend against the containerized local dependencies, start MySQL and the backend
+from the repository root, then run Angular in this directory:
+
+```bash
+docker compose up --build --detach --wait mysql backend
+cd frontend
+npm ci
+npm start
+```
+
+This serves Angular at `http://localhost:4200`, the backend at `http://localhost:18080`, and MySQL on
+host port `13306`. It can coexist with the Compose Nginx frontend at `http://localhost:14200` because
+the host ports differ, but running both frontend servers is usually unnecessary.
+
+`ng serve` does not currently proxy `/api` requests. The Docker Nginx and Vercel configurations do;
+the Angular development proxy should be added with the first frontend-to-backend API integration.
+
+## Docker and Nginx
+
+The frontend Docker image compiles Angular and serves the resulting static files with Nginx. This is
+the production-like path used by Docker Compose and CI smoke tests: it checks the compiled output,
+SPA route fallback, `/api` forwarding, container networking, and the `/health` endpoint. Production
+uses Vercel to serve the frontend, so the Nginx container is for the portable Compose environment.
+
 ## Build
 
 ```bash
