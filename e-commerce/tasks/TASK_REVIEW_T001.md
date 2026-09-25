@@ -585,3 +585,56 @@ Broader targeted refresh:
 - `./scripts/smoke-stack.sh` could not connect to the published `127.0.0.1:18080` from this managed session (exit 7), even though `docker compose ps/port` showed `127.0.0.1:13306`, `:18080`, and `:14200`. Therefore host-path and nginx `/api` smoke are **ENVIRONMENT-BLOCKED / NOT VERIFIED**, not passed. The scoped stack and `mysql-data` volume were removed successfully with `docker compose down --volumes`.
 
 Remaining gates: targeted Stage 4 review of the namespace/module/UI changes; fresh browser-level evidence using an approved replacement or manual protocol; HTML review reports; GitHub branch protection and production-environment setup; real protected-main release and rollback evidence.
+
+## Stage 4 code-review — round 3, targeted (Supervisor, 2026-09-25)
+
+Scope: `1b58cd2..cd3b69b` — backend namespace/module restructure, frontend F16–F19 + Playwright removal, CI scripts. Reachability: N/A (T001 entry points are health/runtime, already verified).
+
+Baseline before fix: `./mvnw -B verify` → `Tests run: 18, Failures: 0, Errors: 0, Skipped: 1`, `BUILD SUCCESS`; `npm test -- --watch=false` → `9 passed (9)`; `bash scripts/test-ci-policy.sh` → policy verified + rejection fixtures passed.
+
+| Sev | File | Finding | Conf | Action / status |
+|---|---|---|---|---|
+| P1 | `docker-compose.yml:14` | MySQL healthcheck `mysqladmin ping -h localhost` uses the Unix socket, which the entrypoint's temporary init server (`port: 0`) answers, so `mysql` turns healthy before the real server starts. Cold start (fresh volume — every CI `compose-smoke` run) failed: backend `CommunicationsException: Communications link failure` at 04:31:25, real server `ready … port: 3306` at 04:31:24.67 after `Temporary server stopped` at 04:31:23. Earlier "host-loopback environment-blocked" reading was this defect (backend exited, nothing listening). | 100 | **Fixed**: `-h 127.0.0.1` forces TCP; temp server runs `skip-networking`. |
+| P2 | `frontend/src/app/app.spec.ts` (Escape test) | Test dispatches Escape on the `mat-sidenav`; Material's drawer listener (`sidenav.mjs:226`) closes and calls `stopPropagation()`, so the shell `(keydown.escape)` handler added for F17 never runs. The F17 case (focus still on Menu button, outside the drawer) is uncovered. | 100 | Suggested: dispatch Escape from `menuButton` while drawer is open; assert closed + focus returned. |
+
+P0: none. P3: none. Security/migration reviewers: no new auth, secrets, or schema lines in scope beyond round 2.
+
+### AFTER (P1 fix) — 2026-09-25
+
+Two consecutive cold starts, each `docker compose up --build --detach --wait --wait-timeout 180` → `./scripts/smoke-stack.sh` → `docker compose down --volumes`:
+
+```
+run 1 up exit=0 | backend (healthy) frontend (healthy) mysql (healthy)
+Backend, frontend, and frontend /api proxy health checks passed.  smoke exit=0
+HTTP/1.1 200 | Server: nginx/1.29.8 | {"groups":["liveness","readiness"],"status":"UP"}
+run 2 up exit=0 | (same) | smoke exit=0 | HTTP/1.1 200 via nginx /api proxy
+```
+
+Host-path and nginx `/api` smoke: **PASS** (supersedes 2026-09-14 ENVIRONMENT-BLOCKED note).
+
+Remaining T001 gates: P2 above (user decision), fresh real-browser a11y/responsive/visual evidence (method undecided), HTML review reports, O7 human setup, real release + rollback run.
+
+### Real-browser evidence (replacement for removed Playwright suite) — 2026-09-25
+
+Method (user-approved): Playwright 1.61.1 + Chromium from the user's `easy-ui-mcp` container (`f5185617cfa8`, host network), driven by `docker exec` with a one-off probe script. Nothing installed into the repo. Target: fresh Compose stack (`up --wait` exit 0, `smoke-stack.sh` passed), production nginx build at `127.0.0.1:14200`, animations enabled, real keyboard input. Script + screenshots: `reports/T001-browser-evidence-20260925/` (local only — `reports/` is gitignored; output pasted below is the durable record).
+
+```
+PASS 375: shell layout/overflow/title {"url":"/products","h1":"Products","title":"Products | E-Commerce","overflowX":false,"menuButton":true,"primaryNav":false}
+PASS 375: F16 skip link stays on /login and focuses main {"focused":"Skip to content","path":"/login","hash":"","h1":"Log in","activeId":"main-content"}
+PASS 375: F18/F19 not-found route {"path":"/nope","h1":"Page not found","title":"Page not found | E-Commerce"}
+PASS 375: F17 Escape closes drawer and restores focus {"drawerOpen":false,"ariaExpanded":"false","focus":"Open navigation menu"}
+PASS 375: no console errors / external requests {"consoleErrors":[],"externalRequests":[]}
+PASS 768: shell layout/overflow/title {"url":"/products","h1":"Products","title":"Products | E-Commerce","overflowX":false,"menuButton":false,"primaryNav":true}
+PASS 768: F16 skip link stays on /login and focuses main {...same...}
+PASS 768: F18/F19 not-found route {...same...}
+PASS 768: no console errors / external requests {"consoleErrors":[],"externalRequests":[]}
+PASS 1280: shell layout/overflow/title {"url":"/products","h1":"Products","title":"Products | E-Commerce","overflowX":false,"menuButton":false,"primaryNav":true}
+PASS 1280: F16 skip link stays on /login and focuses main {...same...}
+PASS 1280: F18/F19 not-found route {...same...}
+PASS 1280: no console errors / external requests {"consoleErrors":[],"externalRequests":[]}
+exit=0
+```
+
+Verdict: F16–F19 **PASS in a real browser**; responsiveness at 375/768/1280 **PASS** (no horizontal overflow; menu-only <768, primary nav ≥768). Visual: screenshots reviewed by Supervisor, match UI_SPEC shell; they are one-off evidence, not an automated regression baseline. Caveat: `drawer-375.png` was captured during the slide-in transition (drawer partly open).
+
+Remaining T001 gates: P2 Escape-test gap, HTML review reports, O7 human setup, real release + rollback run.
