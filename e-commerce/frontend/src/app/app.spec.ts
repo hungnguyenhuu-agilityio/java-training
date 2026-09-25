@@ -1,3 +1,5 @@
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { MATERIAL_ANIMATIONS } from '@angular/material/core';
 import { provideRouter, Router } from '@angular/router';
@@ -10,6 +12,8 @@ describe('App', () => {
       imports: [App],
       providers: [
         provideRouter(routes),
+        provideHttpClient(),
+        provideHttpClientTesting(),
         { provide: MATERIAL_ANIMATIONS, useValue: { animationsDisabled: true } },
       ],
     }).compileComponents();

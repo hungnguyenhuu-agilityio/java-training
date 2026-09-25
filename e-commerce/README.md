@@ -242,7 +242,7 @@ Before the first release, replace the placeholder `https://railway-backend-origi
 jobs refuse to deploy while the placeholder remains. The Railway service must provide
 `SPRING_DATASOURCE_URL`, `SPRING_DATASOURCE_USERNAME`, and `SPRING_DATASOURCE_PASSWORD`; only the
 `local` profile has datasource defaults. `FRONTEND_HEALTH_URL` is the frontend origin: smoke checks
-also call `<origin>/api/actuator/health` through the Vercel `/api` proxy.
+also call `<origin>/api/catalog/categories` through the Vercel `/api` proxy.
 
 ### Rollback runbook
 
